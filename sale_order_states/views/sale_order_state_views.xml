@@ -1,0 +1,10 @@
+<odoo>
+    <record id="action_sale_order_state" model="ir.actions.act_window">
+        <field name="name">Sale Order States</field>
+        <field name="res_model">sale.order.state</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_sale_order_state_root" name="Sale Order States" parent="sale.sale_menu_root"
+              action="action_sale_order_state"/>
+</odoo>
