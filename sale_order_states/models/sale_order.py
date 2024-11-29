@@ -16,7 +16,6 @@ class SaleOrder(models.Model):
     vgr_state_selection = fields.Selection(
         selection='_get_vgr_state_selection',
         string='Custom VGR States (Selection)',
-        default=lambda self: self._get_vgr_state_selection()[0][0] if self._get_vgr_state_selection() else False,
         store=True
     )
 
