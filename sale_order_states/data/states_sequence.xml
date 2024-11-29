@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <data noupdate="1">
+        <record id="sale_order_state_1" model="sale.order.state">
+            <field name="name">ENTRADA INFORMACIÓN</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="sale_order_state_2" model="sale.order.state">
+            <field name="name">SOLICITADO</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="sale_order_state_3" model="sale.order.state">
+            <field name="name">EN PROCESO</field>
+            <field name="sequence">30</field>
+        </record>
+         <record id="sale_order_state_4" model="sale.order.state">
+            <field name="name">REALIZADO PROYECTO</field>
+            <field name="sequence">40</field>
+        </record>
+         <record id="sale_order_state_5" model="sale.order.state">
+            <field name="name">CITADO PRESENTACION</field>
+            <field name="sequence">50</field>
+        </record>
+         <record id="sale_order_state_6" model="sale.order.state">
+            <field name="name">PRESENTADO - SEGUIMIENTO</field>
+            <field name="sequence">60</field>
+        </record>
+         <record id="sale_order_state_7" model="sale.order.state">
+            <field name="name">ACEPTADO</field>
+            <field name="sequence">70</field>
+        </record>
+         <record id="sale_order_state_8" model="sale.order.state">
+            <field name="name">MEDICIÓN</field>
+            <field name="sequence">80</field>
+        </record>
+         <record id="sale_order_state_9" model="sale.order.state">
+            <field name="name">REALIZAR PEDIDO</field>
+            <field name="sequence">90</field>
+        </record>
+         <record id="sale_order_state_10" model="sale.order.state">
+            <field name="name">PEDIDO REALIZADO</field>
+            <field name="sequence">100</field>
+        </record>
+         <record id="sale_order_state_11" model="sale.order.state">
+            <field name="name">MONTAJE PREVISTO</field>
+            <field name="sequence">110</field>
+        </record>
+        <record id="sale_order_state_12" model="sale.order.state">
+            <field name="name">MONTANDO</field>
+            <field name="sequence">120</field>
+        </record>
+        <record id="sale_order_state_13" model="sale.order.state">
+            <field name="name">INCIDENCIA</field>
+            <field name="sequence">130</field>
+        </record>
+        <record id="sale_order_state_14" model="sale.order.state">
+            <field name="name">FINALIZADO</field>
+            <field name="sequence">140</field>
+        </record>
+        <record id="sale_order_state_15" model="sale.order.state">
+            <field name="name">CANCELADO</field>
+            <field name="sequence">150</field>
+        </record>
+        <record id="sale_order_state_16" model="sale.order.state">
+            <field name="name">PAGOS PENDIENTES</field>
+            <field name="sequence">160</field>
+        </record>
+    </data>
+</odoo>

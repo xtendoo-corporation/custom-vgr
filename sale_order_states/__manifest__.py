@@ -5,12 +5,15 @@
     "author": "Xtendoo",
     "license": "AGPL-3",
     "depends": [
+        "base",
+        "web",
         "sale",
     ],
     "data": [
         "views/sale_order_state_views.xml",
         "views/sale_order_form.xml",
         "security/ir.model.access.csv",
+        "data/states_sequence.xml",
     ],
     "installable": True,
 }

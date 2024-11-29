@@ -1,0 +1,114 @@
+# Translation of Odoo Server.
+# This file contains the translation of the following modules:
+# 	* sale_order_states
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Odoo Server 17.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-11-29 11:36+0000\n"
+"PO-Revision-Date: 2024-11-29 11:36+0000\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: \n"
+"Plural-Forms: \n"
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order__vgr_alert_type
+msgid "Alert Type"
+msgstr "Tipo Alerta"
+
+#. module: sale_order_states
+#: model:ir.model.fields.selection,name:sale_order_states.selection__sale_order__vgr_alert_type__warning
+#: model:ir.model.fields.selection,name:sale_order_states.selection__sale_order_state__alert_type__warning
+msgid "Aviso"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__create_uid
+msgid "Created by"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__create_date
+msgid "Created on"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order__vgr_state_id
+msgid "Custom VGR States"
+msgstr "VGR Estados"
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order__vgr_state_selection
+msgid "Custom VGR States (Selection)"
+msgstr "VGR Estados"
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__display_name
+msgid "Display Name"
+msgstr "Nombre"
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__id
+msgid "ID"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__write_uid
+msgid "Last Updated by"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__write_date
+msgid "Last Updated on"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__name
+msgid "Nombre del estado"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields.selection,name:sale_order_states.selection__sale_order__vgr_alert_type__normal
+#: model:ir.model.fields.selection,name:sale_order_states.selection__sale_order_state__alert_type__normal
+msgid "Normal"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model.fields.selection,name:sale_order_states.selection__sale_order__vgr_alert_type__danger
+#: model:ir.model.fields.selection,name:sale_order_states.selection__sale_order_state__alert_type__danger
+msgid "Peligro"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.model,name:sale_order_states.model_sale_order_state
+msgid "Sale Order State"
+msgstr "VGR Estados"
+
+#. module: sale_order_states
+#: model:ir.actions.act_window,name:sale_order_states.action_sale_order_state
+msgid "Sale Order States"
+msgstr "VGR Estados"
+
+#. module: sale_order_states
+#: model:ir.model,name:sale_order_states.model_sale_order
+msgid "Sales Order"
+msgstr "Orden de venta"
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__sequence
+msgid "Sequence"
+msgstr "Secuencia"
+
+#. module: sale_order_states
+#: model:ir.model.fields,field_description:sale_order_states.field_sale_order_state__alert_type
+msgid "Tipo de Alerta"
+msgstr ""
+
+#. module: sale_order_states
+#: model:ir.ui.menu,name:sale_order_states.menu_sale_order_state_root
+msgid "VGR States"
+msgstr "VGR Estados"

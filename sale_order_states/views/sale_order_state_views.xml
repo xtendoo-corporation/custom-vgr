@@ -1,10 +1,39 @@
 <odoo>
+     <record id="view_sale_order_state_tree" model="ir.ui.view">
+        <field name="name">sale.order.state.tree</field>
+        <field name="model">sale.order.state</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="sequence" widget="handle"/>
+                <field name="name"/>
+                <field name="alert_type"/>
+            </tree>
+        </field>
+    </record>
+
+     <record id="view_sale_order_state_form" model="ir.ui.view">
+        <field name="name">sale.order.state.form</field>
+        <field name="model">sale.order.state</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="sequence"/>
+                        <field name="alert_type"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
     <record id="action_sale_order_state" model="ir.actions.act_window">
         <field name="name">Sale Order States</field>
         <field name="res_model">sale.order.state</field>
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_sale_order_state_root" name="Sale Order States" parent="sale.sale_menu_root"
-              action="action_sale_order_state"/>
+    <menuitem id="menu_sale_order_state_root" name="VGR States" parent="sale.sale_menu_root"
+              action="action_sale_order_state"
+              sequence="50"/>
 </odoo>
