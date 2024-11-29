@@ -1,4 +1,4 @@
-from odoo import models, fields
+from odoo import models, fields, api, _
 
 
 class SaleOrderState(models.Model):
@@ -20,12 +20,3 @@ class SaleOrderState(models.Model):
         default='normal'
     )
 
-    def write(self, vals):
-        res = super(SaleOrderState, self).write(vals)
-        if 'sequence' in vals:
-            # Lógica para actualizar el otro modelo
-            orders = self.env['sale.order'].search([('vgr_state_id', 'in', self.ids)])
-            for order in orders:
-                order.vgr_state_selection = order._get_vgr_state_selection()[0][
-                    0] if order._get_vgr_state_selection() else False
-        return res

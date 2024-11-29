@@ -26,4 +26,30 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_order_tree_inherit" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.custom.orders</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='invoice_status']" position="after">
+                <field name="vgr_alert_type" invisible="1" column_invisible="1"/>
+                <field name="vgr_state_selection" widget="badge"
+                       decoration-danger="vgr_alert_type == 'danger'"
+                       decoration-warning="vgr_alert_type == 'warning'"
+                       decoration-info="vgr_alert_type == 'normal'"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_kanban_inherit" model="ir.ui.view">
+        <field name="name">sale.order.kanban.inherit.custom</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_sale_order_kanban"/>
+        <field name="arch" type="xml">
+            <xpath expr="//kanban[@class='o_kanban_mobile']" position="inside">
+                <field name="vgr_state_selection"/>
+            </xpath>
+        </field>
+    </record>
 </odoo>

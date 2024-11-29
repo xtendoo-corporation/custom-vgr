@@ -1,16 +1,18 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 
 class SaleOrder(models.Model):
     _inherit = 'sale.order'
 
     vgr_state_id = fields.Many2one(
         'sale.order.state',
-        string='Custom VGR States'
+        string='Custom VGR States',
     )
 
     @api.model
     def _get_vgr_state_selection(self):
-        states = self.env['sale.order.state'].search([])
+        # Recuperamos todos los estados ordenados por la secuencia
+        states = self.env['sale.order.state'].search([], order='sequence')
+        # Devolvemos los estados ordenados para el campo de selección
         return [(state.name, state.name) for state in states]
 
     vgr_state_selection = fields.Selection(
@@ -31,5 +33,4 @@ class SaleOrder(models.Model):
         for order in self:
             state = self.env['sale.order.state'].search([('name', '=', order.vgr_state_selection)], limit=1)
             order.vgr_alert_type = state.alert_type if state else 'normal'
-
 
