@@ -12,14 +12,21 @@ class SaleOrder(models.Model):
     def _get_vgr_state_selection(self):
         # Recuperamos todos los estados ordenados por la secuencia
         states = self.env['sale.order.state'].search([], order='sequence')
+        # Imprimimos los estados para verlos
+        print("Estados recuperados:", states)
         # Devolvemos los estados ordenados para el campo de selección
         return [(state.name, state.name) for state in states]
 
     vgr_state_selection = fields.Selection(
         selection='_get_vgr_state_selection',
         string='Custom VGR States (Selection)',
-        store=True
+        store=True,
+        group_expand = "_read_group_vgr_state_id"
     )
+
+    @api.model
+    def _read_group_vgr_state_id(self, stages, domain, order):
+        return self.env['sale.order.state'].search([]).mapped('name')
 
     vgr_alert_type = fields.Selection(
         [('normal', 'Normal'), ('warning', 'Aviso'), ('danger', 'Peligro')],

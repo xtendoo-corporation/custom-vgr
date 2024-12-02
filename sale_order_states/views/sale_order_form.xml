@@ -47,8 +47,9 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_sale_order_kanban"/>
         <field name="arch" type="xml">
-            <xpath expr="//kanban[@class='o_kanban_mobile']" position="inside">
-                <field name="vgr_state_selection"/>
+            <xpath expr="//kanban" position="attributes">
+                <attribute name="default_group_by">vgr_state_selection</attribute>
+                <attribute name="context">{'group_expand': True}</attribute>
             </xpath>
         </field>
     </record>

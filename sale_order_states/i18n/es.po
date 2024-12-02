@@ -39,7 +39,7 @@ msgstr ""
 #. module: sale_order_states
 #: model:ir.model.fields,field_description:sale_order_states.field_sale_order__vgr_state_id
 msgid "Custom VGR States"
-msgstr "VGR Estados"
+msgstr "VGR Estados Ids"
 
 #. module: sale_order_states
 #: model:ir.model.fields,field_description:sale_order_states.field_sale_order__vgr_state_selection
