@@ -2,12 +2,14 @@ from odoo import models, fields, api
 
 
 class SaleOrderLine(models.Model):
-    _inherit = 'sale.order.line'
+    _inherit = ['sale.order.line']
 
     intermediary_margin = fields.Float(string='% Intermediario', related='order_id.partner_id.intermediary_margin',
-                                       readonly=False)
-    profit_percentage = fields.Float(string='% beneficio', related='product_id.profit_percentage', readonly=False)
-    unit_price_without_margin = fields.Float(string='Precio unitario', compute='_compute_unit_price_without_margin', readonly=False)
+                                       readonly=False, tracking=True)
+    profit_percentage = fields.Float(string='% beneficio', related='product_id.profit_percentage', readonly=False,
+                                     tracking=True)
+    unit_price_without_margin = fields.Float(string='Base Unitaria', compute='_compute_unit_price_without_margin',
+                                             readonly=False, tracking=True)
 
     @api.onchange('purchase_price', 'profit_percentage')
     def _compute_unit_price_without_margin(self):
@@ -23,7 +25,7 @@ class SaleOrderLine(models.Model):
                 record.price_unit = 0
             if record.purchase_price > 0 and record.price_unit > 0:
                 record.profit_percentage = ((record.price_unit / (
-                        1 + record.intermediary_margin / 100)) - record.purchase_price) / record.purchase_price * 100
+                    1 + record.intermediary_margin / 100)) - record.purchase_price) / record.purchase_price * 100
             else:
                 record.profit_percentage = 0
 
@@ -44,7 +46,9 @@ class SaleOrderLine(models.Model):
         for record in self:
             if record.purchase_price > 0 and record.price_unit > 0:
                 # Calcular profit_percentage correctamente
-                record.profit_percentage = ((record.price_unit / (1 + record.intermediary_margin / 100)) - record.purchase_price) / record.purchase_price * 100
+                record.profit_percentage = ((record.price_unit / (
+                        1 + record.intermediary_margin / 100)) - record.purchase_price) / record.purchase_price * 100
             else:
                 # Si el precio de compra o el price_unit son cero, no se puede calcular profit_percentage
                 record.profit_percentage = 0
+

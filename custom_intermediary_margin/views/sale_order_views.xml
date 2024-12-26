@@ -4,12 +4,11 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="attributes">
-                <attribute name="string">PvP con intermediación</attribute>
-            </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
                 <field name="unit_price_without_margin"/>
                 <field name="profit_percentage"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="before">
                 <field name="intermediary_margin"/>
             </xpath>
         </field>
