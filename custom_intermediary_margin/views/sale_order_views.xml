@@ -13,4 +13,22 @@
             </xpath>
         </field>
     </record>
+
+    <record id="view_sale_margin_sale_order_line_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.line.tree.margin.view.form.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_margin.sale_margin_sale_order"/>
+        <field name="arch" type="xml">
+            <xpath expr="//label[@for='margin']" position="before">
+                <label for="intermediary_price" string="Margen intermediario"/>
+                <div class="text-nowrap" groups="base.group_user">
+                    <field name="intermediary_price" class="oe_inline" widget="monetary"/>
+                </div>
+                <label for="net_margin" string="Margen neto"/>
+                <div class="text-nowrap" groups="base.group_user">
+                    <field name="net_margin" class="oe_inline" widget="monetary"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
 </odoo>
