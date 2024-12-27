@@ -34,17 +34,4 @@ class SaleOrderLine(models.Model):
             if record.price_unit > 0:
                 record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
 
-    # @api.depends('price_unit', 'purchase_price', 'intermediary_price','intermediary_percentage')
-    # def _compute_net_margin_and_intermediary_price(self):
-    #     for record in self:
-    #         if record.price_unit and record.purchase_price and record.intermediary_price:
-    #             record.net_margin = record.price_unit - record.purchase_price - record.intermediary_price
-    #         if record.purchase_price and record.intermediary_percentage > 0:
-    #             record.intermediary_price = record.purchase_price * (record.intermediary_percentage / 100)
-    #
-    # @api.depends('purchase_price', 'net_margin')
-    # def _compute_unit_price_without_margin_intermediary(self):
-    #     for record in self:
-    #         if record.purchase_price > 0 and record.net_margin > 0:
-    #             record.unit_price_without_margin_intermediary = record.purchase_price + record.net_margin
 
