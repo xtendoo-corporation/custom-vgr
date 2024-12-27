@@ -9,7 +9,7 @@ class SaleOrderLine(models.Model):
     unit_price_without_margin_intermediary = fields.Float(string='Base Unitaria',
                                                           compute='_compute_margins',
                                                           readonly=False, store=True)
-    intermediary_price = fields.Float(string='Precio Intermediario', compute='_compute_margins', store=True, readonly=True)
+    intermediary_price = fields.Float(string='Margen Intermediario', compute='_compute_margins', store=True, readonly=True)
     net_margin = fields.Float(string='Net Margin', compute='_compute_margins', store=True)
 
     @api.onchange('product_id')
