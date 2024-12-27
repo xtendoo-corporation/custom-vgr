@@ -4,69 +4,54 @@ from odoo import models, fields, api
 class SaleOrderLine(models.Model):
     _inherit = ['sale.order.line']
 
-    intermediary_margin = fields.Float(string='% Intermediario', related='order_id.partner_id.intermediary_margin',
-                                       readonly=False, tracking=True)
-    profit_percentage = fields.Float(string='% beneficio', related='product_id.profit_percentage', readonly=False,
-                                     tracking=True)
-    unit_price_without_margin = fields.Float(string='Base Unitaria', compute='_compute_unit_price_without_margin',
-                                             readonly=False, tracking=True)
-    intermediary_price = fields.Float(string='Intermediary Price', compute='_compute_intermediary_price', store=True)
-    net_margin = fields.Float(string='Net Margin', compute='_compute_net_margin', store=True)
+    intermediary_margin = fields.Float(string='% Intermediario', readonly=False)
+    profit_percentage = fields.Float(string='% beneficio', readonly=False)
+    unit_price_without_margin_intermediary = fields.Float(string='Base Unitaria',
+                                                          compute='_compute_unit_price_without_margin_intermediary',
+                                                          readonly=False)
+    intermediary_price = fields.Float(string='Intermediary Price', compute='_compute_net_margin_and_intermediary_price', store=True, readonly=True)
+    net_margin = fields.Float(string='Net Margin', compute='_compute_net_margin_and_intermediary_price', store=True)
 
-    @api.depends('purchase_price', 'intermediary_margin')
-    def _compute_intermediary_price(self):
+    @api.onchange('product_id')
+    def _onchange_product_id(self):
         for record in self:
-            if record.purchase_price > 0 and record.intermediary_margin >= 0:
-                record.intermediary_price = record.purchase_price * (record.intermediary_margin / 100)
-            else:
-                record.intermediary_price = 0
+            print(f"Onchange product_id: {record.product_id}")
+            if record.order_id.partner_id:
+                record.intermediary_margin = record.order_id.partner_id.intermediary_margin
+                print(f"Set intermediary_margin: {record.intermediary_margin}")
+            if record.product_id:
+                record.profit_percentage = record.product_id.profit_percentage
+                print(f"Set profit_percentage: {record.profit_percentage}")
 
-    @api.depends('price_unit', 'intermediary_price')
-    def _compute_net_margin(self):
+    @api.depends('price_unit', 'purchase_price', 'intermediary_price','intermediary_margin')
+    def _compute_net_margin_and_intermediary_price(self):
         for record in self:
-            if record.price_unit > 0 and record.intermediary_price >= 0:
-                record.net_margin = record.price_unit - record.intermediary_price
+            print(f"Computing intermediary_price for record: {record}")
+            print(f"Computing net_margin for record: {record}")
+            if record.price_unit and record.purchase_price and record.intermediary_price:
+                record.net_margin = record.price_unit - record.purchase_price - record.intermediary_price
+                print(f"Computed net_margin: {record.net_margin}")
             else:
                 record.net_margin = 0
+                print("Set net_margin to 0")
+            if record.purchase_price and record.intermediary_margin > 0:
+                record.intermediary_price = record.purchase_price * (record.intermediary_margin / 100)
+                print(f"Computed intermediary_price: {record.intermediary_price}")
+            else:
+                record.intermediary_price = 0
+                print("Set intermediary_price to 0")
 
-    @api.onchange('purchase_price', 'profit_percentage')
-    def _compute_unit_price_without_margin(self):
+    @api.depends('purchase_price', 'net_margin')
+    def _compute_unit_price_without_margin_intermediary(self):
         for record in self:
-            if record.purchase_price > 0 and record.profit_percentage >= 0:
-                record.unit_price_without_margin = record.purchase_price * (1 + record.profit_percentage / 100)
+            print(f"Computing unit_price_without_margin_intermediary for record: {record}")
+            if record.purchase_price > 0 and record.net_margin >= 0:
+                record.unit_price_without_margin_intermediary = record.purchase_price + record.net_margin
+                print(
+                    f"Computed unit_price_without_margin_intermediary: {record.unit_price_without_margin_intermediary}")
             else:
-                record.unit_price_without_margin = 0
-            if record.purchase_price > 0 and record.profit_percentage >= 0 and record.intermediary_margin >= 0:
-                record.price_unit = (record.purchase_price * (1 + record.profit_percentage / 100) *
-                                     (1 + record.intermediary_margin / 100))
-            else:
-                record.price_unit = 0
-            if record.purchase_price > 0 and record.price_unit > 0:
-                record.profit_percentage = ((record.price_unit / (
-                    1 + record.intermediary_margin / 100)) - record.purchase_price) / record.purchase_price * 100
-            else:
-                record.profit_percentage = 0
+                record.unit_price_without_margin_intermediary = 0
+                print("Set unit_price_without_margin_intermediary to 0")
 
-    @api.onchange('purchase_price', 'profit_percentage', 'intermediary_margin')
-    def _onchange_profit_percentage(self):
-        for record in self:
-            # Verificar que purchase_price y profit_percentage no sean cero o nulos
-            if record.purchase_price > 0 and record.profit_percentage >= 0 and record.intermediary_margin >= 0:
-                # Calcular price_unit con los valores válidos
-                record.price_unit = (record.purchase_price * (1 + record.profit_percentage / 100) *
-                                     (1 + record.intermediary_margin / 100))
-            else:
-                # Si los valores no son válidos, dejar price_unit como está
-                record.price_unit = 0
 
-    @api.onchange('price_unit', 'purchase_price')
-    def _onchange_price_unit(self):
-        for record in self:
-            if record.purchase_price > 0 and record.price_unit > 0:
-                # Calcular profit_percentage correctamente
-                record.profit_percentage = ((record.price_unit / (
-                        1 + record.intermediary_margin / 100)) - record.purchase_price) / record.purchase_price * 100
-            else:
-                # Si el precio de compra o el price_unit son cero, no se puede calcular profit_percentage
-                record.profit_percentage = 0
 

@@ -9,6 +9,7 @@
         'views/res_partner_views.xml',
         'views/sale_order_views.xml',
         "views/product_template_views.xml",
+        # "report/sale_report_views.xml",
     ],
     'installable': True,
     'application': False,

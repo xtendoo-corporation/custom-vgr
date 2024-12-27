@@ -15,3 +15,4 @@ class SaleOrder(models.Model):
     def _compute_net_margin(self):
         for order in self:
             order.net_margin = order.margin - order.intermediary_price
+
