@@ -11,9 +11,7 @@ class SaleReport(models.Model):
         select = super(SaleReport, self)._select_sale()
         select += ", SUM(l.purchase_price * l.product_uom_qty) AS total_cost, \
                            ((SUM(l.price_subtotal) - SUM(l.purchase_price * l.product_uom_qty)) / NULLIF(SUM(l.purchase_price * l.product_uom_qty), 0)) * 100 AS total_margin_percent, \
-                           (SUM(l.price_subtotal) - SUM(l.purchase_price * l.product_uom_qty)) AS total_margin_euros"
-        print("*"*100)
-        print(select)
+                           (SUM(l.net_margin * l.product_uom_qty)) AS total_margin_euros"
         return select
 
     def _group_by_sale(self):
@@ -31,6 +29,4 @@ class SaleReport(models.Model):
             GROUP BY {self._group_by_sale()}
             {")" if with_ else ""}
         """
-        print("Query Generated:")
-        print(query)
         return query
