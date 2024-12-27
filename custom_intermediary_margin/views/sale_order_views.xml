@@ -5,11 +5,12 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
-                <field name="unit_price_without_margin_intermediary"/>
+                <field name="unit_price_without_margin_intermediary"
+                       modifiers="{'readonly': [('profit_percentage', '!=', order_id.product_id.profit_percentage)]}"/>
                 <field name="profit_percentage"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="before">
-                <field name="intermediary_margin"/>
+                <field name="intermediary_percentage"/>
             </xpath>
         </field>
     </record>
