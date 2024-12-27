@@ -5,7 +5,7 @@ class SaleOrderLine(models.Model):
     _inherit = ['sale.order.line']
 
     intermediary_percentage = fields.Float(string='% Intermediario', readonly=False)
-    profit_percentage = fields.Float(string='% beneficio', readonly=False)
+    profit_percentage = fields.Float(string='% Beneficio', readonly=False)
     unit_price_without_margin_intermediary = fields.Float(string='Base Unitaria',
                                                           compute='_compute_margins',
                                                           readonly=False, store=True)
