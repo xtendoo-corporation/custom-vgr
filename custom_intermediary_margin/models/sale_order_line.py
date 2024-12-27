@@ -55,33 +55,13 @@ class SaleOrderLine(models.Model):
                 if record.intermediary_percentage == 0:
                     record.unit_price_without_margin_intermediary = record.price_unit
 
-            #
-            #
-            # if record.intermediary_percentage > 0:
-            #     if record.profit_percentage > 0:
-            #         record.intermediary_price = record.unit_price_without_margin_intermediary * (record.intermediary_percentage / 100)
-            #         record.price_unit = record.unit_price_without_margin_intermediary + record.intermediary_price
-            #
-            #     if record.profit_percentage == 0:
-            #         record.intermediary_price = record.price_unit * (record.intermediary_percentage / 100)
-            #         record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
-            #
-            #
-            #
-            # if record.purchase_price > 0 and record.net_margin > 0:
-            #     record.unit_price_without_margin_intermediary = record.purchase_price + record.net_margin
-            # if record.net_margin > 0 and record.intermediary_price > 0 and record.purchase_price > 0:
-            #     record.price_unit = record.purchase_price + record.net_margin + record.intermediary_price
-            # if record.price_unit > 0:
-            #     record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
-
-    def _prepare_invoice_line(self):
-        res = super(SaleOrderLine, self)._prepare_invoice_line()
+    def _prepare_invoice_line(self, **kwargs):
+        res = super(SaleOrderLine, self)._prepare_invoice_line(**kwargs)
         res.update({
             'intermediary_percentage': self.intermediary_percentage,
             'profit_percentage': self.profit_percentage,
             'unit_price_without_margin_intermediary': self.unit_price_without_margin_intermediary,
             'intermediary_price': self.intermediary_price,
-            'net_margin': self.net_margin,
+            'purchase_price': self.purchase_price,
         })
         return res

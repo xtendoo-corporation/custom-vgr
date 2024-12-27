@@ -23,13 +23,28 @@
         <field name="inherit_id" ref="sale_margin.sale_margin_sale_order"/>
         <field name="arch" type="xml">
             <xpath expr="//label[@for='margin']" position="before">
-                <label for="intermediary_price" string="Margen intermediario"/>
+                     <label for="total_sale" string="Total venta"/>
                 <div class="text-nowrap" groups="base.group_user">
-                    <field name="intermediary_price" class="oe_inline" widget="monetary"/>
+                    <field name="total_sale" class="oe_inline" widget="monetary"/>
                 </div>
-                <label for="net_margin" string="Margen neto"/>
+                <label for="total_cost" string="Total coste"/>
                 <div class="text-nowrap" groups="base.group_user">
-                    <field name="net_margin" class="oe_inline" widget="monetary"/>
+                    <field name="total_cost" class="oe_inline" widget="monetary"/>
+                </div>
+
+                <label for="total_sale_intermediary"><b>Total venta + intermediario</b></label>
+                <div class="text-nowrap" groups="base.group_user">
+                    <strong><field string="Total venta + intermediario" name="total_sale_intermediary" class="oe_inline" widget="monetary"/></strong>
+                </div>
+
+                <label for="total_margin_euros" string="Total margen euros"/>
+                <div class="text-nowrap" groups="base.group_user">
+                    <field name="total_margin_euros" class="oe_inline" widget="monetary"/>
+                </div>
+
+                <label for="total_margin_percent" string="Total margen %"/>
+                <div class="text-nowrap" groups="base.group_user">
+                    <field name="total_margin_percent" class="oe_inline" widget="percentage"/>
                 </div>
             </xpath>
         </field>
