@@ -4,13 +4,30 @@ from odoo import models, fields, api
 class SaleOrderLine(models.Model):
     _inherit = ['sale.order.line']
 
-    intermediary_percentage = fields.Float(string='% Intermediario', readonly=False)
-    profit_percentage = fields.Float(string='% Beneficio', readonly=False)
-    unit_price_without_margin_intermediary = fields.Float(string='Base unitaria',
-                                                          compute='_compute_margins',
-                                                          readonly=False, store=True)
-    intermediary_price = fields.Float(string='Precio intermediación', compute='_compute_margins', store=True)
-    net_margin = fields.Float(string='Margen neto', compute='_compute_margins', store=True)
+    intermediary_percentage = fields.Float(
+        string='% Intermediario',
+        readonly=False
+    )
+    profit_percentage = fields.Float(
+        string='% Beneficio',
+        readonly=False
+    )
+    unit_price_without_margin_intermediary = fields.Float(
+        string='Base intermediación',
+        compute='_compute_margins',
+        readonly=False,
+        store=True
+    )
+    intermediary_price = fields.Float(
+        string='Precio intermediación',
+        compute='_compute_margins',
+        store=True
+    )
+    net_margin = fields.Float(
+        string='Margen neto',
+        compute='_compute_margins',
+        store=True
+    )
 
     @api.onchange('product_id')
     def _onchange_product_id(self):
