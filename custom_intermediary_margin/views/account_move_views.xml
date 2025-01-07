@@ -12,6 +12,11 @@
                 <field name="intermediary_percentage" string="% Intermediación" readonly="1"/>
                 <field name="intermediary_price" string="Margen intermediación" readonly="1"/>
             </xpath>
+             <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='price_subtotal']" position="replace">
+             </xpath>
+            <xpath expr="//field[@name='invoice_line_ids']/tree//field[@name='tax_ids']" position="before">
+                <field name="price_subtotal"/>
+            </xpath>
         </field>
     </record>
 </odoo>
