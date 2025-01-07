@@ -4,16 +4,27 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="after">
-                <field name="unit_price_without_margin_intermediary" optional="hide"/>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="replace">
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='purchase_price']" position="after">
                 <field name="profit_percentage"/>
             </xpath>
-            <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="before">
-                <field name="intermediary_price" force_save="1"/>
-                <field name="intermediary_percentage"/>
+
+            <xpath expr="//field[@name='order_line']/tree//field[@name='discount']" position="replace">
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="replace">
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="before">
+                <field name="price_unit"/>
+                <field name="discount"/>
+                <field name="price_subtotal"/>
+            </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="before">
+                <field name="intermediary_percentage"/>
+                <field name="intermediary_price" force_save="1"/>
+            </xpath>
+
+
         </field>
     </record>
 
@@ -23,7 +34,8 @@
         <field name="inherit_id" ref="sale_margin.sale_margin_sale_order"/>
         <field name="arch" type="xml">
             <xpath expr="//label[@for='margin']" position="before">
-
+                <br/>
+                <br/>
                 <label for="total_sale" string="Total venta"/>
                 <div class="text-nowrap" groups="base.group_user">
                     <field name="total_sale" class="oe_inline" widget="monetary"/>
@@ -38,21 +50,19 @@
                     <b>Total intermediación</b>
                 </label>
                 <div class="text-nowrap" groups="base.group_user">
-                    <strong>
-                        <field string="Total intermediación" name="total_intermediary" class="oe_inline"
-                               widget="monetary"/>
-                    </strong>
+                    <field string="Total intermediación" name="total_intermediary" class="oe_inline"
+                           widget="monetary"/>
                 </div>
 
-<!--                <label for="total_margin_euros" string="Total margen euros"/>-->
-<!--                <div class="text-nowrap" groups="base.group_user">-->
-<!--                    <field name="total_margin_euros" class="oe_inline" widget="monetary"/>-->
-<!--                </div>-->
+                <!--                <label for="total_margin_euros" string="Total margen euros"/>-->
+                <!--                <div class="text-nowrap" groups="base.group_user">-->
+                <!--                    <field name="total_margin_euros" class="oe_inline" widget="monetary"/>-->
+                <!--                </div>-->
 
-<!--                <label for="total_margin_percent" string="Total margen %"/>-->
-<!--                <div class="text-nowrap" groups="base.group_user">-->
-<!--                    <field name="total_margin_percent" class="oe_inline" widget="percentage"/>-->
-<!--                </div>-->
+                <!--                <label for="total_margin_percent" string="Total margen %"/>-->
+                <!--                <div class="text-nowrap" groups="base.group_user">-->
+                <!--                    <field name="total_margin_percent" class="oe_inline" widget="percentage"/>-->
+                <!--                </div>-->
 
             </xpath>
         </field>

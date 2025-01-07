@@ -51,6 +51,8 @@ class SaleOrderLine(models.Model):
                         print("*"*100)
                         print(record.intermediary_price)
                         record.intermediary_price = record.unit_price_without_margin_intermediary * (record.intermediary_percentage / 100)
+                        # nueva linea debajo
+                        record.margin = record.margin - record.intermediary_price
                         print(record.intermediary_price)
                         record.price_unit = record.unit_price_without_margin_intermediary + record.intermediary_price
                     if record.intermediary_percentage == 0:
@@ -60,6 +62,8 @@ class SaleOrderLine(models.Model):
                     record.net_margin = record.price_unit - record.purchase_price
                     if record.intermediary_percentage > 0:
                         record.intermediary_price = record.price_unit * (record.intermediary_percentage / 100)
+                        # nueva linea debajo
+                        record.margin = record.margin - record.intermediary_price
                         record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
                     if record.intermediary_percentage == 0:
                         record.unit_price_without_margin_intermediary = record.price_unit
@@ -68,6 +72,8 @@ class SaleOrderLine(models.Model):
                 record.net_margin = record.price_unit
                 if record.intermediary_percentage > 0:
                     record.intermediary_price = record.price_unit * (record.intermediary_percentage / 100)
+                    # nueva linea debajo
+                    record.margin = record.margin - record.intermediary_price
                     record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
                 if record.intermediary_percentage == 0:
                     record.unit_price_without_margin_intermediary = record.price_unit
