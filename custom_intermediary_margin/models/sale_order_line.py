@@ -52,7 +52,9 @@ class SaleOrderLine(models.Model):
                         print(record.intermediary_price)
                         record.intermediary_price = record.unit_price_without_margin_intermediary * (record.intermediary_percentage / 100)
                         # nueva linea debajo
+                        record.margin = record.price_subtotal - (record.purchase_price * record.product_uom_qty)
                         record.margin = record.margin - record.intermediary_price
+                        record.margin_percent = record.price_subtotal and record.margin / record.price_subtotal
                         print(record.intermediary_price)
                         record.price_unit = record.unit_price_without_margin_intermediary + record.intermediary_price
                     if record.intermediary_percentage == 0:
@@ -63,7 +65,9 @@ class SaleOrderLine(models.Model):
                     if record.intermediary_percentage > 0:
                         record.intermediary_price = record.price_unit * (record.intermediary_percentage / 100)
                         # nueva linea debajo
+                        record.margin = record.price_subtotal - (record.purchase_price * record.product_uom_qty)
                         record.margin = record.margin - record.intermediary_price
+                        record.margin_percent = record.price_subtotal and record.margin / record.price_subtotal
                         record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
                     if record.intermediary_percentage == 0:
                         record.unit_price_without_margin_intermediary = record.price_unit
@@ -73,7 +77,9 @@ class SaleOrderLine(models.Model):
                 if record.intermediary_percentage > 0:
                     record.intermediary_price = record.price_unit * (record.intermediary_percentage / 100)
                     # nueva linea debajo
+                    record.margin = record.price_subtotal - (record.purchase_price * record.product_uom_qty)
                     record.margin = record.margin - record.intermediary_price
+                    record.margin_percent = record.price_subtotal and record.margin / record.price_subtotal
                     record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
                 if record.intermediary_percentage == 0:
                     record.unit_price_without_margin_intermediary = record.price_unit
