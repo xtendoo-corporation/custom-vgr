@@ -14,6 +14,8 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="replace">
             </xpath>
+            <xpath expr="//field[@name='order_line']/tree//field[@name='price_subtotal']" position="replace">
+            </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="before">
                 <field name="price_unit"/>
                 <field name="discount"/>
@@ -23,8 +25,6 @@
                 <field name="intermediary_percentage"/>
                 <field name="intermediary_price" force_save="1"/>
             </xpath>
-
-
         </field>
     </record>
 
