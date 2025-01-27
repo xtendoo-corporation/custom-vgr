@@ -20,12 +20,10 @@ class SaleOrderLine(models.Model):
     )
     intermediary_price = fields.Float(
         string='Precio intermediación',
-        compute='_compute_margins',
         store=True
     )
     net_margin = fields.Float(
         string='Margen neto',
-        compute='_compute_margins',
         store=True
     )
 
