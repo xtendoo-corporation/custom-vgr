@@ -22,7 +22,7 @@ class SaleOrderState(models.Model):
 
     company_id = fields.Many2one(
         'res.company',
-        string='Company',
+        string='Compañia',
         required=True,
         default=lambda self: self.env.company
     )
