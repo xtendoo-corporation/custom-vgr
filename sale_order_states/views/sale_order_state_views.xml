@@ -7,6 +7,9 @@
                 <field name="sequence" widget="handle"/>
                 <field name="name"/>
                 <field name="alert_type"/>
+                <field name="company_id"/>
+                <field name="visible_presupuesto"/>
+                <field name="visible_pedido"/>
             </tree>
         </field>
     </record>
@@ -21,6 +24,9 @@
                         <field name="name"/>
                         <field name="sequence"/>
                         <field name="alert_type"/>
+                        <field name="company_id"/>
+                        <field name="visible_presupuesto"/>
+                        <field name="visible_pedido"/>
                     </group>
                 </sheet>
             </form>

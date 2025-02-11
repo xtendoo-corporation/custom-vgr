@@ -20,3 +20,20 @@ class SaleOrderState(models.Model):
         default='normal'
     )
 
+    company_id = fields.Many2one(
+        'res.company',
+        string='Company',
+        required=True,
+        default=lambda self: self.env.company
+    )
+    visible_presupuesto = fields.Boolean(
+        string='Visible Presupuesto',
+        default=False
+    )
+    visible_pedido = fields.Boolean(
+        string='Visible Pedido',
+        default=False
+    )
+
+
+

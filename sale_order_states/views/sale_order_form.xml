@@ -6,8 +6,12 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/div[@class='oe_button_box' and @name='button_box']" position="before">
-                <field name="vgr_state_selection" widget="statusbar" options="{'clickable': '1',}"
-                       style="float: right;"/>
+                  <field name="vgr_state_presupuesto" widget="statusbar" options="{'clickable': '1'}"
+                       style="float: right;"
+                       invisible="state == 'sale' or state == 'cancel'"/>
+                <field name="vgr_state_pedido" widget="statusbar" options="{'clickable': '1'}"
+                       style="float: right;"
+                       invisible="state == 'draft' or state == 'sent' or state == 'cancel'"/>
             </xpath>
         </field>
     </record>
@@ -19,10 +23,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='state']" position="after">
                 <field name="vgr_alert_type" invisible="1" column_invisible="1"/>
-                <field name="vgr_state_selection" widget="badge"
+                <field name="vgr_state_presupuesto" widget="badge"
                        decoration-danger="vgr_alert_type == 'danger'"
                        decoration-warning="vgr_alert_type == 'warning'"
-                       decoration-info="vgr_alert_type == 'normal'"/>
+                       decoration-info="vgr_alert_type == 'normal'"
+                       />
             </xpath>
         </field>
     </record>
@@ -34,10 +39,11 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='invoice_status']" position="after">
                 <field name="vgr_alert_type" invisible="1" column_invisible="1"/>
-                <field name="vgr_state_selection" widget="badge"
+                <field name="vgr_state_pedido" widget="badge"
                        decoration-danger="vgr_alert_type == 'danger'"
                        decoration-warning="vgr_alert_type == 'warning'"
-                       decoration-info="vgr_alert_type == 'normal'"/>
+                       decoration-info="vgr_alert_type == 'normal'"
+                       />
             </xpath>
         </field>
     </record>
