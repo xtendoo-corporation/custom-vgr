@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <template id="report_saleorder_document_inherit" inherit_id="sale.report_saleorder_document">
+        <xpath expr="//th[@name='th_taxes']" position="replace">
+        </xpath>
+        <xpath expr="//td[@name='td_taxes']" position="replace">
+        </xpath>
+        <xpath expr="//td[@name='td_priceunit']" position="replace">
+            <td name="td_priceunit" class="text-end">
+                <span t-esc="line.price_unit * (1 - (line.discount / 100))"/>
+            </td>
+        </xpath>
+        <xpath expr="//div[@id='informations']" position="attributes">
+            <attribute name="style">border-radius: 5px; padding: 5px; background-color: rgba(0, 128, 0, 0.07);</attribute>
+        </xpath>
+        <xpath expr="//table" position="attributes">
+             <attribute name="style">padding: 5px; background-color: rgba(0, 128, 0, 0.07);</attribute>
+        </xpath>
+
+        <xpath expr="//span[@name='order_note']" position="replace">
+        </xpath>
+
+        <xpath expr="//div[@class='clearfix']" position="replace">
+            <div class="text-start" style="padding: 5px; float: left;">
+                <p>50% a la aceptación</p>
+                <p>50% antes del montaje</p>
+                <p>BBVA: ES81 0182 3288 6802 0161 6795</p>
+            </div>
+            <div id="total" class="row" name="total" style="float: center; padding: 10px;">
+<!--                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">-->
+                        <table class="table table-sm table-borderless">
+                            <!-- Tax totals -->
+                            <t t-set="tax_totals" t-value="doc.tax_totals"/>
+                            <t t-call="sale.document_tax_totals"/>
+                        </table>
+<!--                    </div>-->
+                </div>
+        </xpath>
+    </template>
+</odoo>
