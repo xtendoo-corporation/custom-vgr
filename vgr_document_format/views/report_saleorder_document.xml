@@ -7,7 +7,8 @@
         </xpath>
         <xpath expr="//td[@name='td_priceunit']" position="replace">
             <td name="td_priceunit" class="text-end">
-                <span t-esc="line.price_unit * (1 - (line.discount / 100))"/>
+                 <span t-esc="line.price_unit * (1 - (line.discount / 100))"
+                        t-options='{"widget": "float", "precision": 2}'/>
             </td>
         </xpath>
         <xpath expr="//div[@id='informations']" position="attributes">
