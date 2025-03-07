@@ -12,15 +12,15 @@
             </td>
         </xpath>
         <xpath expr="//div[@id='informations']" position="attributes">
-            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.2);</attribute>
+            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);</attribute>
         </xpath>
 
         <xpath expr="//thead" position="attributes">
-            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.2);</attribute>
+            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);</attribute>
         </xpath>
 
         <xpath expr="//table" position="after">
-            <div style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.2);"/>
+            <div style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
         </xpath>
 
         <xpath expr="//span[@name='order_note']" position="replace">

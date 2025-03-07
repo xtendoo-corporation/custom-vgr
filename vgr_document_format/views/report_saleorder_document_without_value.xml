@@ -43,7 +43,7 @@
                 <span t-field="doc.name">SO0000</span>
             </h3>
 
-            <div class="row mt-4 mb-2" id="informations" style="border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.2);">
+            <div class="row mt-4 mb-2" id="informations" style="border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);">
                 <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2" name="informations_reference">
                     <strong>Su referencia:</strong><br/>
                     <span class="m-0" t-field="doc.client_order_ref">SO0000</span>
@@ -71,7 +71,7 @@
             <div class="oe_structure"></div>
             <table class="table table-sm o_main_table table-borderless mt-4">
                 <!-- In case we want to repeat the header, remove "display: table-row-group" -->
-                <thead style="display: table-row-group; border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.2);">
+                <thead style="display: table-row-group; border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);">
                     <tr>
                         <th name="th_description" class="text-start">Descripción</th>
                         <th name="th_quantity" class="text-end">Cantidad</th>
