@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+vgr_restrictions_groups.access_sale_order_budget,sale.order budget,sale.model_sale_order,group_modify_quotations,1,1,1,1
+vgr_restrictions_groups.access_stock_picking_readonly,stock.picking readonly,stock.model_stock_picking,group_modify_quotations,1,0,0,0
+vgr_restrictions_groups.access_account_move_readonly,account.move readonly,account.model_account_move,group_modify_quotations,1,0,0,0

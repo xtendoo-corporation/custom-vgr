@@ -26,6 +26,7 @@
                 </strong>
                 <div t-field="doc.partner_invoice_id"
                     t-options='{"widget": "contact", "fields": ["address", "name", "phone"], "no_marker": True, "phone_icons": True}'/>
+                <br/>
                 <t t-if="doc.partner_shipping_id != doc.partner_invoice_id">
                     <strong>Dirección de Envío:</strong>
                     <div t-field="doc.partner_shipping_id"
@@ -43,24 +44,24 @@
                 <span t-field="doc.name">SO0000</span>
             </h3>
 
-            <div class="row mt-4 mb-2" id="informations" style="border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);">
+            <div class="row mt-4 mb-2" id="informations">
                 <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2" name="informations_reference">
-                    <strong>Su referencia:</strong><br/>
+                    <strong style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">Su referencia:</strong><br/>
                     <span class="m-0" t-field="doc.client_order_ref">SO0000</span>
                 </div>
                 <div t-if="doc.date_order" class="col-auto col-3 mw-100 mb-2" name="informations_date">
-                    <strong t-if="doc.state in ['draft', 'sent']">Fecha de presupuesto:</strong>
-                    <strong t-else="">Fecha de pedido:</strong><br/>
+                    <strong t-if="doc.state in ['draft', 'sent']" style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">Fecha de presupuesto:</strong>
+                    <strong t-else="" style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">Fecha de pedido:</strong><br/>
                     <span class="m-0" t-field="doc.date_order" t-options='{"widget": "date"}'>2023-12-31</span>
                 </div>
                 <div t-if="doc.validity_date and doc.state in ['draft', 'sent']"
                     class="col-auto col-3 mw-100 mb-2"
                     name="expiration_date">
-                    <strong>Vencimiento:</strong><br/>
+                    <strong style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">Vencimiento:</strong><br/>
                     <span class="m-0" t-field="doc.validity_date">2023-12-31</span>
                 </div>
                 <div t-if="doc.user_id.name" class="col-auto col-3 mw-100 mb-2">
-                    <strong>Comercial:</strong><br/>
+                    <strong style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">Comercial:</strong><br/>
                     <span class="m-0" t-field="doc.user_id">Mitchell Admin</span>
                 </div>
             </div>
@@ -115,14 +116,14 @@
             <div class="oe_structure"></div>
 
             <div t-if="not doc.signature" class="oe_structure"></div>
-            <div t-else="" class="mt-4 ml64 mr4" name="signature">
-                <div class="offset-8">
+            <div t-else="" class="mt-4 ml128 mr4" name="signature" style="padding: 5px; border: 1px solid #3a5240; font-size: 12px; float: right;">
+                <div>
                     <strong>Firma</strong>
                 </div>
-                <div class="offset-8">
+                <div>
                     <img t-att-src="image_data_uri(doc.signature)" style="max-height: 4cm; max-width: 8cm;"/>
                 </div>
-                <div class="offset-8 text-center">
+                <div class="text-center">
                     <span t-field="doc.signed_by">Oscar Morgan</span>
                 </div>
             </div>

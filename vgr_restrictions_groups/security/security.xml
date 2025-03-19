@@ -1,0 +1,57 @@
+<odoo>
+    <data noupdate="1">
+        <!-- Grupo de usuarios que pueden modificar presupuestos -->
+        <record id="group_modify_quotations" model="res.groups">
+            <field name="name">Modificador de Presupuestos</field>
+            <field name="category_id" ref="base.module_category_sales"/>
+        </record>
+
+        <!-- Regla para permitir modificar y eliminar solo presupuestos (sale.order en estado draft) -->
+        <record id="rule_modify_quotations" model="ir.rule">
+            <field name="name">Modificar solo presupuestos</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="groups" eval="[(4, ref('group_modify_quotations'))]"/>
+            <field name="domain_force">[("state", "=", "draft")]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="1"/>
+            <field name="perm_create" eval="1"/>
+            <field name="perm_unlink" eval="1"/>
+        </record>
+
+        <!-- Regla para bloquear modificación de pedidos confirmados -->
+        <record id="rule_no_edit_orders" model="ir.rule">
+            <field name="name">No modificar pedidos confirmados</field>
+            <field name="model_id" ref="sale.model_sale_order"/>
+            <field name="groups" eval="[(4, ref('group_modify_quotations'))]"/>
+            <field name="domain_force">[("state", "!=", "draft")]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Regla para prohibir modificación de albaranes -->
+        <record id="rule_no_edit_picking" model="ir.rule">
+            <field name="name">No modificar albaranes</field>
+            <field name="model_id" ref="stock.model_stock_picking"/>
+            <field name="groups" eval="[(4, ref('group_modify_quotations'))]"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+
+        <!-- Regla para prohibir modificación de facturas -->
+        <record id="rule_no_edit_invoices" model="ir.rule">
+            <field name="name">No modificar facturas</field>
+            <field name="model_id" ref="account.model_account_move"/>
+            <field name="groups" eval="[(4, ref('group_modify_quotations'))]"/>
+            <field name="domain_force">[]</field>
+            <field name="perm_read" eval="1"/>
+            <field name="perm_write" eval="0"/>
+            <field name="perm_create" eval="0"/>
+            <field name="perm_unlink" eval="0"/>
+        </record>
+    </data>
+</odoo>

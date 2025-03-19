@@ -7,50 +7,120 @@
         </xpath>
         <xpath expr="//td[@name='td_priceunit']" position="replace">
             <td name="td_priceunit" class="text-end">
-                 <span t-esc="line.price_unit * (1 - (line.discount / 100))"
-                        t-options='{"widget": "float", "precision": 2}'/>
+                <span t-esc="line.price_unit * (1 - (line.discount / 100))"
+                      t-options='{"widget": "float", "precision": 2}'/>
             </td>
         </xpath>
-        <xpath expr="//div[@id='informations']" position="attributes">
-            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);</attribute>
+        <!--        <xpath expr="//div[@id='informations']" position="attributes">-->
+        <!--            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);</attribute>-->
+        <!--        </xpath>-->
+        <xpath expr="//div[@id='informations']" position="replace">
+            <div class="row mt-4 mb-2" id="informations">
+                <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2" name="informations_reference">
+                    <strong
+                        style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
+                        Su referencia:
+                    </strong>
+                    <br/>
+                    <span class="m-0" t-field="doc.client_order_ref">SO0000</span>
+                </div>
+                <div t-if="doc.date_order" class="col-auto col-3 mw-100 mb-2" name="informations_date">
+                    <strong t-if="doc.state in ['draft', 'sent']"
+                            style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
+                        Fecha del presupuesto:
+                    </strong>
+                    <strong t-else=""
+                            style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
+                        Fecha del pedido:
+                    </strong>
+                    <br/>
+                    <span class="m-0" t-field="doc.date_order" t-options='{"widget": "date"}'>2023-12-31</span>
+                </div>
+                <div t-if="doc.validity_date and doc.state in ['draft', 'sent']"
+                     class="col-auto col-3 mw-100 mb-2"
+                     name="expiration_date">
+                    <strong
+                        style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
+                        Vencimiento:
+                    </strong>
+                    <br/>
+                    <span class="m-0" t-field="doc.validity_date">2023-12-31</span>
+                </div>
+                <div t-if="doc.user_id.name" class="col-auto col-3 mw-100 mb-2">
+                    <strong
+                        style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
+                        Comercial:
+                    </strong>
+                    <br/>
+                    <span class="m-0" t-field="doc.user_id">Mitchell Admin</span>
+                </div>
+            </div>
+        </xpath>
+
+        <xpath expr="//div[@t-field='doc.partner_invoice_id']" position="after">
+            <br/>
+        </xpath>
+
+<!--        <xpath expr="//div[@name='signature']" position="attributes">-->
+<!--            <attribute name="style">padding: 5px; border: 1px solid #3a5240; font-size: 12px;</attribute>-->
+<!--        </xpath>-->
+
+        <xpath expr="//div[@name='signature']" position="replace">
+            <div t-else="" class="mt-4 ml128 mr4" name="signature" style="padding: 5px; border: 1px solid #3a5240; font-size: 12px; float: right;">
+                <div>
+                    <strong>Firma</strong>
+                </div>
+                <div>
+                    <img t-att-src="image_data_uri(doc.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                </div>
+                <div class="text-center">
+                    <span t-field="doc.signed_by">Oscar Morgan</span>
+                </div>
+            </div>
         </xpath>
 
         <xpath expr="//thead" position="attributes">
-            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);</attribute>
+            <attribute name="style">border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);
+            </attribute>
         </xpath>
 
         <xpath expr="//table" position="after">
-            <div style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
+            <div
+                style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
         </xpath>
 
         <xpath expr="//span[@name='order_note']" position="replace">
         </xpath>
 
         <xpath expr="//h2" position="replace">
-              <h3 class="mt-4">
-                <span t-if="env.context.get('proforma', False) or is_pro_forma">Factura Pro-Forma# </span>
-                <span t-elif="doc.state in ['draft','sent']">Presupuesto # </span>
-                <span t-else="">Pedido # </span>
+            <h3 class="mt-4">
+                <span t-if="env.context.get('proforma', False) or is_pro_forma">Factura Pro-Forma#</span>
+                <span t-elif="doc.state in ['draft','sent']">Presupuesto #</span>
+                <span t-else="">Pedido #</span>
                 <span t-field="doc.name">SO0000</span>
             </h3>
         </xpath>
 
         <xpath expr="//div[@class='clearfix']" position="replace">
-            <div class="text-start" style="padding: 5px; float: left; border: 1px solid #3a5240; padding: 5px;">
-                <p>Forma de pago</p>
-                <p>50% a la aceptación</p>
-                <p>50% antes del montaje</p>
-                <p>BBVA: ES81 0182 3288 6802 0161 6795</p>
+            <div class="text-start"
+                 style="padding: 5px; float: left; border: 1px solid #3a5240; font-size: 12px; padding-right: 80px; margin-right: 10px;">
+                <span>Forma de pago</span>
+                <br/>
+                <span>50% a la aceptación</span>
+                <br/>
+                <span>50% antes del montaje</span>
+                <br/>
+                <span>BBVA: ES81 0182 3288 6802 0161 6795</span>
             </div>
             <div id="total" class="row" name="total" style="float: center; padding: 10px;">
-<!--                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">-->
-                        <table class="table table-sm table-borderless">
-                            <!-- Tax totals -->
-                            <t t-set="tax_totals" t-value="doc.tax_totals"/>
-                            <t t-call="sale.document_tax_totals"/>
-                        </table>
-<!--                    </div>-->
-                </div>
+                <!--                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">-->
+                <table class="table table-sm table-borderless">
+                    <!-- Tax totals -->
+                    <t t-set="tax_totals" t-value="doc.tax_totals"/>
+                    <t t-call="sale.document_tax_totals"/>
+                </table>
+                <!--                    </div>-->
+            </div>
         </xpath>
     </template>
 </odoo>
