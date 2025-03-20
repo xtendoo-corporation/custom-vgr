@@ -6,7 +6,6 @@
     'depends': ['sale', 'stock', 'account'],
     'data': [
         'security/security.xml',
-        'security/ir.model.access.csv',
     ],
     'installable': True,
     'application': False,
