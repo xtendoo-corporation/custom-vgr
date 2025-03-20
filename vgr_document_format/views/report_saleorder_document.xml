@@ -102,15 +102,9 @@
         </xpath>
 
         <xpath expr="//div[@class='clearfix']" position="replace">
-            <div class="text-start"
-                 style="padding: 5px; float: left; border: 1px solid #3a5240; font-size: 12px; padding-right: 80px; margin-right: 10px;">
-                <span>Forma de pago</span>
-                <br/>
-                <span>50% a la aceptación</span>
-                <br/>
-                <span>50% antes del montaje</span>
-                <br/>
-                <span>BBVA: ES81 0182 3288 6802 0161 6795</span>
+
+            <div class="text-start" style="padding: 5px; float: left; border: 1px solid #3a5240; font-size: 11px; padding-right: 80px; margin-right: 10px;">
+                <span t-field="doc.payment_text"/>
             </div>
             <div id="total" class="row" name="total" style="float: center; padding: 10px;">
                 <!--                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">-->

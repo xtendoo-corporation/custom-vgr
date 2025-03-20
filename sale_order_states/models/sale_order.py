@@ -8,6 +8,12 @@ class SaleOrder(models.Model):
         string='Custom VGR States',
     )
 
+    payment_text = fields.Text(
+        string='Forma de pago',
+        default='Forma de pago\n50% a la aceptación\n50% antes del montaje\nBBVA: ES81 0182 3288 6802 0161 6795',
+        store=True
+    )
+
     @api.model
     def _get_vgr_state_selection(self):
         states = self.env['sale.order.state'].search([

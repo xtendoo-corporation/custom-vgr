@@ -13,6 +13,10 @@
                        style="float: right;"
                        invisible="state == 'draft' or state == 'sent' or state == 'cancel'"/>
             </xpath>
+
+            <xpath expr="//page[@name='other_information']/group/group[@name='sales_person']" position="inside">
+                <field name="payment_text"/>
+            </xpath>
         </field>
     </record>
 
