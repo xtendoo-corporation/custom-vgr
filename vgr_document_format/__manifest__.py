@@ -12,6 +12,7 @@
     "data": [
         'views/report_saleorder_document.xml',
         'views/report_saleorder_document_without_value.xml',
+        'views/report_invoice_document.xml',
     ],
     "license": "AGPL-3",
     "installable": True,
