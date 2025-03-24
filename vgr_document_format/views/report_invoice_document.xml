@@ -7,25 +7,25 @@
                     <t t-if="o.move_type == 'out_invoice'">
                         <strong
                             style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                            Invoice Date:
+                            Fecha de la factura:
                         </strong>
                     </t>
                     <t t-elif="o.move_type == 'out_refund'">
                         <strong
                             style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                            Credit Note Date:
+                            Fecha de la nota de crédito:
                         </strong>
                     </t>
                     <t t-elif="o.move_type == 'out_receipt'">
                         <strong
                             style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                            Receipt Date:
+                            Fecha del recibo:
                         </strong>
                     </t>
                     <t t-else="">
                         <strong
                             style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                            Date:
+                            Fecha:
                         </strong>
                     </t>
                     <br/>
@@ -35,7 +35,7 @@
                      t-if="o.invoice_date_due and o.move_type == 'out_invoice' and o.state == 'posted'" name="due_date">
                     <strong
                         style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                        Due Date:
+                        Fecha de vencimiento:
                     </strong>
                     <br/>
                     <span t-field="o.invoice_date_due">2023-10-31</span>
@@ -44,7 +44,7 @@
                      t-if="o.delivery_date" name="delivery_date">
                     <strong
                         style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                        Delivery Date:
+                        Fecha de entrega:
                     </strong>
                     <br/>
                     <span t-field="o.delivery_date">2023-09-25</span>
@@ -53,7 +53,7 @@
                      t-if="o.invoice_origin" name="origin">
                     <strong
                         style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                        Source:
+                        Origen:
                     </strong>
                     <br/>
                     <span t-field="o.invoice_origin">SO123</span>
@@ -62,7 +62,7 @@
                      t-if="o.partner_id.ref" name="customer_code">
                     <strong
                         style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                        Customer Code:
+                        Código del cliente:
                     </strong>
                     <br/>
                     <span t-field="o.partner_id.ref"/>
@@ -71,7 +71,7 @@
                      name="reference">
                     <strong
                         style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);">
-                        Reference:
+                        Referencia:
                     </strong>
                     <br/>
                     <span t-field="o.ref">INV/2023/00001</span>
