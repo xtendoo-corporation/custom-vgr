@@ -22,8 +22,8 @@
                 <field name="price_subtotal"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="before">
-                <field name="intermediary_percentage"/>
-                <field name="intermediary_price" force_save="1"/>
+                <field name="intermediary_percentage" optional="show"/>
+                <field name="intermediary_price" force_save="1" optional="show"/>
             </xpath>
         </field>
     </record>
