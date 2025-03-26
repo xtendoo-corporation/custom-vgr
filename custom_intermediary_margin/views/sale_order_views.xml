@@ -18,7 +18,7 @@
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='tax_id']" position="before">
                 <field name="price_unit"/>
-                <field name="discount"/>
+                <field name="discount" optional="show"/>
                 <field name="price_subtotal"/>
             </xpath>
             <xpath expr="//field[@name='order_line']/tree//field[@name='price_unit']" position="before">

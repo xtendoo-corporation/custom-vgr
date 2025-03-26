@@ -35,6 +35,12 @@ class SaleOrderLine(models.Model):
             if record.product_id:
                 record.profit_percentage = record.product_id.profit_percentage
 
+
+    @api.onchange('profit_percentage', 'intermediary_percentage')
+    def _onchange_percentage(self):
+        self._compute_margins()
+
+
     @api.depends('price_unit', 'purchase_price', 'intermediary_price', 'intermediary_percentage', 'net_margin', 'profit_percentage')
     def _compute_margins(self):
         self.net_margin = 0
