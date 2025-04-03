@@ -51,3 +51,17 @@ class SaleOrder(models.Model):
             order.total_margin_euros = sum(line.net_margin for line in order.order_line)
             order.total_margin_percent = sum(line.profit_percentage for line in order.order_line) / 100
 
+    def copy_data(self, default=None):
+        if default is None:
+            default = {}
+
+        if 'order_line' not in default:
+            default['order_line'] = [
+                (0, 0, {
+                    **line.copy_data()[0],
+                    'purchase_price': line.purchase_price
+                })
+                for line in self.order_line.filtered(lambda l: not l.is_downpayment)
+            ]
+
+        return super(SaleOrder, self).copy_data(default)
