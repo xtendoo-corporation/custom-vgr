@@ -68,11 +68,20 @@ class SaleOrderLine(models.Model):
 
             if record.purchase_price == 0:
                 record.net_margin = record.price_unit
+                print("Purchase price is 0")
+                print("Record.price_unit", record.price_unit)
                 if record.intermediary_percentage > 0:
+                    print("Intermediary percentage > 0", record.intermediary_percentage)
                     record.intermediary_price = record.price_unit * (record.intermediary_percentage / 100)
+                    print("Intermediary price", record.intermediary_price)
                     record.unit_price_without_margin_intermediary = record.price_unit - record.intermediary_price
+                    print("Unit price without margin intermediary", record.unit_price_without_margin_intermediary)
+                    #añadido para que no se quede a 0 el precio unitario
+                    record.price_subtotal = record.price_unit + record.intermediary_price
+                    print("Price unit", record.price_unit)
                 if record.intermediary_percentage == 0:
-                    record.unit_price_without_margin_intermediary = record.price_unit
+                    record.unit_price_without_margin_intermediary = record.net_margin
+
 
     def _prepare_invoice_line(self, **kwargs):
         res = super(SaleOrderLine, self)._prepare_invoice_line(**kwargs)
