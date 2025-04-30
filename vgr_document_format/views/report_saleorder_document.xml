@@ -102,18 +102,21 @@
         </xpath>
 
         <xpath expr="//div[@class='clearfix']" position="replace">
+         <div class="row mb-4">
+                <div class="col-4">
+                    <div style="padding: 5px; border: 1px solid #3a5240; font-size: 11px;">
+                        <span t-field="doc.payment_text"/>
+                    </div>
+                </div>
 
-            <div class="text-start" style="padding: 5px; float: left; border: 1px solid #3a5240; font-size: 11px; padding-right: 80px; margin-right: 10px;">
-                <span t-field="doc.payment_text"/>
-            </div>
-            <div id="total" class="row" name="total" style="float: center; padding: 10px;">
-                <!--                    <div t-attf-class="#{'col-6' if report_type != 'html' else 'col-sm-7 col-md-6'} ms-auto">-->
-                <table class="table table-sm table-borderless">
-                    <!-- Tax totals -->
-                    <t t-set="tax_totals" t-value="doc.tax_totals"/>
-                    <t t-call="sale.document_tax_totals"/>
-                </table>
-                <!--                    </div>-->
+                <div class="col-8">
+                    <div id="total" name="total" style="padding: 10px;">
+                        <table class="table table-sm table-borderless">
+                            <t t-set="tax_totals" t-value="doc.tax_totals"/>
+                            <t t-call="sale.document_tax_totals"/>
+                        </table>
+                    </div>
+                </div>
             </div>
         </xpath>
     </template>
