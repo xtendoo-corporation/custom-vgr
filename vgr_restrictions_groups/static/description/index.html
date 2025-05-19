@@ -1,0 +1,88 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="es" lang="es">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <title>VGR Restricciones de Presupuestos</title>
+    <style type="text/css">
+        /* Estilos básicos para documentación */
+        body {
+          font-family: Arial, sans-serif;
+          margin: 20px;
+          color: #333;
+        }
+        h1 { color: #3D578C; border-bottom: 1px solid #3D578C; }
+        h2 { color: #3D578C; }
+        ul { margin-left: 20px; }
+        .document { max-width: 1000px; margin: auto; }
+    </style>
+</head>
+<body>
+<div class="document" id="vgr-restricciones-de-presupuestos">
+    <h1 class="title">VGR Restricciones de Presupuestos</h1>
+
+    <div class="section" id="descripcion">
+        <h2>Descripción</h2>
+        <p>Este módulo para Odoo 17.0 implementa restricciones de seguridad para controlar qué usuarios pueden crear
+            productos y contactos en el sistema. La restricción se basa en la pertenencia a grupos de seguridad
+            específicos.</p>
+    </div>
+
+    <div class="section" id="caracteristicas-principales">
+        <h2>Características principales</h2>
+        <ul class="simple">
+            <li>Grupo de seguridad para creación de productos</li>
+            <li>Grupo de seguridad para creación de contactos</li>
+            <li>Grupo de seguridad para modificación de presupuestos</li>
+            <li>Restricción a nivel de modelo para productos y variantes</li>
+            <li>Excepciones para usuario administrador</li>
+        </ul>
+    </div>
+
+    <div class="section" id="requisitos">
+        <h2>Requisitos</h2>
+        <ul class="simple">
+            <li>Odoo 17.0</li>
+            <li>Módulos base: <code>sale</code>, <code>stock</code>, <code>account</code></li>
+        </ul>
+    </div>
+
+    <div class="section" id="instalacion">
+        <h2>Instalación</h2>
+        <ol class="simple">
+            <li>Clona este repositorio en tu carpeta de addons personalizados de Odoo</li>
+            <li>Actualiza la lista de aplicaciones</li>
+            <li>Busca e instala el módulo "VGR Restricciones de Presupuestos"</li>
+        </ol>
+    </div>
+
+    <div class="section" id="configuracion">
+        <h2>Configuración</h2>
+        <p>Después de instalar el módulo:</p>
+        <ol class="simple">
+            <li>Ve a Configuración &gt; Usuarios y Compañías &gt; Grupos</li>
+            <li>Asigna usuarios a los grupos "Creador de Productos" y/o "Creador de Contactos" según necesites</li>
+        </ol>
+    </div>
+
+    <div class="section" id="uso">
+        <h2>Uso</h2>
+        <p>Una vez configurado:</p>
+        <ul class="simple">
+            <li>Solo los usuarios que pertenezcan al grupo "Creador de Productos" podrán crear nuevos productos</li>
+            <li>Solo los usuarios que pertenezcan al grupo "Creador de Contactos" podrán crear nuevos contactos</li>
+            <li>Los usuarios que intenten crear registros sin pertenecer al grupo correspondiente recibirán un mensaje
+                de error
+            </li>
+            <li>El usuario administrador siempre puede crear productos y contactos</li>
+        </ul>
+    </div>
+
+    <div class="section" id="desarrollador">
+        <h2>Desarrollador</h2>
+        <p>Abraham (Xtendoo)</p>
+    </div>
+
+</div>
+</body>
+</html>

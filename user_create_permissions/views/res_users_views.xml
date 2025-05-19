@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Agregar campos al formulario de usuario -->
+    <record id="view_users_form_create_permissions" model="ir.ui.view">
+        <field name="name">res.users.form.create.permissions</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']" position="inside">
+                <group string="Permisos de Creación" name="creation_permissions">
+                    <field name="can_create_partners"/>
+                    <field name="can_create_products"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+</odoo>
