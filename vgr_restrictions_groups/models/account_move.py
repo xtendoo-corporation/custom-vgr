@@ -5,7 +5,7 @@ class AccountMove(models.Model):
 
     @api.model
     def _check_modify_quotations_group(self):
-        if self.env.user.has_group('vgr_restrictions_groups.group_modify_quotations'):
+        if not self.env.user.has_group('vgr_restrictions_groups.group_modify_quotations'):
             raise exceptions.UserError(_('No tienes permisos para modificar o eliminar asientos contables'))
 
     def write(self, vals):

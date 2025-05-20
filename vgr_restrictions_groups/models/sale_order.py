@@ -5,7 +5,7 @@ class SaleOrder(models.Model):
 
     @api.model
     def _check_modify_quotations_group(self):
-        if self.env.user.has_group('vgr_restrictions_groups.group_modify_quotations') and self.state != 'draft':
+        if not self.env.user.has_group('vgr_restrictions_groups.group_modify_quotations') and self.state != 'draft':
             raise exceptions.UserError(_('No tienes permisos para modificar o eliminar pedidos'))
 
     def write(self, vals):

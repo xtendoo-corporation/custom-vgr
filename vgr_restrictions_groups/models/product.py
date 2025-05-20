@@ -6,7 +6,7 @@ class ProductTemplate(models.Model):
     @api.model
     def create(self, vals):
         # Si el usuario no tiene el permiso y no es admin
-        if not self.env.user.has_group('vgr_restrictions_groups.group_create_products') and not self.env.user._is_admin():
+        if not self.env.user.has_group('vgr_restrictions_groups.group_create_products'):
             raise exceptions.AccessError(_('No tienes permisos para crear productos. Contacta con el administrador.'))
         return super(ProductTemplate, self).create(vals)
 
@@ -16,6 +16,6 @@ class ProductProduct(models.Model):
     @api.model
     def create(self, vals):
         # Si el usuario no tiene el permiso y no es admin
-        if not self.env.user.has_group('vgr_restrictions_groups.group_create_products') and not self.env.user._is_admin():
+        if not self.env.user.has_group('vgr_restrictions_groups.group_create_products'):
             raise exceptions.AccessError(_('No tienes permisos para crear variantes de producto. Contacta con el administrador.'))
         return super(ProductProduct, self).create(vals)
