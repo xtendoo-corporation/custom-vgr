@@ -1,0 +1,149 @@
+<odoo>
+    <!--  Create a completely new template that doesn't rely on complex xpath expressions  -->
+    <template id="report_saleorder_document_without_vat">
+        <t t-call="web.external_layout">
+            <!-- Modificar estas líneas -->
+            <t t-set="doc" t-value="doc.with_context(lang=doc.partner_id.lang, hide_vat=True)"/>
+            <!-- Eliminar esta línea que puede estar causando el problema -->
+            <!-- <t t-set="address" t-value="doc.partner_id"/> -->
+            <!-- Establecer VAT a False explícitamente -->
+            <t t-set="forced_vat" t-value="False"/>
+
+            <!--  Document Header  -->
+            <div class="page">
+                <h3 class="mt-4">
+                    <span t-if="env.context.get('proforma', False) or is_pro_forma">Factura Pro-Forma # (SIN IVA)</span>
+                    <span t-elif="doc.state in ['draft','sent']">Presupuesto # </span>
+                    <span t-else="">Pedido # (SIN IVA)</span>
+                    <span t-field="doc.name"/>
+                </h3>
+                <!--  Information  -->
+                <div class="row mt-4 mb-2" id="informations">
+                    <div t-if="doc.client_order_ref" class="col-auto col-3 mw-100 mb-2" name="informations_reference">
+                        <strong style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"> Su referencia: </strong>
+                        <br/>
+                        <span class="m-0" t-field="doc.client_order_ref"/>
+                    </div>
+                    <div t-if="doc.date_order" class="col-auto col-3 mw-100 mb-2" name="informations_date">
+                        <strong t-if="doc.state in ['draft', 'sent']" style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"> Fecha del presupuesto: </strong>
+                        <strong t-else="" style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"> Fecha del pedido: </strong>
+                        <br/>
+                        <span class="m-0" t-field="doc.date_order" t-options="{'widget': 'date'}"/>
+                    </div>
+                    <div t-if="doc.validity_date and doc.state in ['draft', 'sent']" class="col-auto col-3 mw-100 mb-2" name="expiration_date">
+                        <strong style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"> Vencimiento: </strong>
+                        <br/>
+                        <span class="m-0" t-field="doc.validity_date"/>
+                    </div>
+                    <div t-if="doc.user_id.name" class="col-auto col-3 mw-100 mb-2">
+                        <strong style="border: 1px solid #3a5240; padding: 5px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"> Comercial: </strong>
+                        <br/>
+                        <span class="m-0" t-field="doc.user_id"/>
+                    </div>
+                </div>
+                <!--  Lines Table  -->
+                <table class="table table-sm o_main_table">
+                    <thead style="border: 1px solid #3a5240; padding: 5px; background-color: rgba(58, 82, 64, 0.7);">
+                        <tr>
+                            <th class="text-start">Descripción</th>
+                            <th class="text-center">Cantidad</th>
+                            <th class="text-end">Precio unitario</th>
+                            <th class="text-end">Importe</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <t t-foreach="doc.order_line" t-as="line">
+                            <t t-if="line.display_type == 'line_section'">
+                                <tr>
+                                    <td colspan="4" class="o_line_section">
+                                        <span t-field="line.name"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-elif="line.display_type == 'line_note'">
+                                <tr>
+                                    <td colspan="4" class="o_line_note">
+                                        <span t-field="line.name"/>
+                                    </td>
+                                </tr>
+                            </t>
+                            <t t-else="">
+                                <tr>
+                                    <td>
+                                        <span t-field="line.name"/>
+                                    </td>
+                                    <td class="text-center">
+                                        <span t-field="line.product_uom_qty"/>
+                                        <span t-field="line.product_uom"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-esc="line.price_unit * (1 - (line.discount / 100))" t-options="{'widget': 'float', 'precision': 2}"/>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="line.price_subtotal"/>
+                                    </td>
+                                </tr>
+                            </t>
+                        </t>
+                    </tbody>
+                </table>
+                <div style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
+                <!--  Totals and Payment  -->
+                <div class="row mb-4">
+                    <div class="col-4">
+                        <div style="padding: 5px; border: 1px solid #3a5240; font-size: 11px;">
+                            <span t-field="doc.payment_text"/>
+                        </div>
+                    </div>
+                    <div class="col-8">
+                        <div id="total" name="total" style="padding: 10px;">
+                            <table class="table table-sm table-borderless">
+                                <tr class="border-black o_subtotal">
+                                    <td>
+                                        <strong>Total sin IVA</strong>
+                                    </td>
+                                    <td class="text-end">
+                                        <span t-field="doc.amount_untaxed"/>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-end" style="font-weight: bold; font-style: italic;"> PRESUPUESTO SIN IVA </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!--  Signature  -->
+                <div t-if="doc.signature" class="mt-4 ml128 mr4" style="padding: 5px; border: 1px solid #3a5240; font-size: 12px; float: right;">
+                    <div>
+                        <strong>Firma</strong>
+                    </div>
+                    <div>
+                        <img t-att-src="image_data_uri(doc.signature)" style="max-height: 4cm; max-width: 8cm;"/>
+                    </div>
+                    <div class="text-center">
+                        <span t-field="doc.signed_by"/>
+                    </div>
+                </div>
+            </div>
+        </t>
+    </template>
+    <!--  Create a new report action for the quote without VAT-->
+    <template id="report_saleorder_without_vat">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="vgr_document_format.report_saleorder_document_without_vat" t-lang="doc.partner_id.lang"/>
+            </t>
+        </t>
+    </template>
+    <!--  Register the report in the system  -->
+    <record id="action_report_saleorder_without_vat" model="ir.actions.report">
+        <field name="name">Presupuesto sin IVA</field>
+        <field name="model">sale.order</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">vgr_document_format.report_saleorder_without_vat</field>
+        <field name="report_file">vgr_document_format.report_saleorder_without_vat</field>
+        <field name="binding_model_id" ref="sale.model_sale_order"/>
+        <field name="binding_type">report</field>
+    </record>
+</odoo>

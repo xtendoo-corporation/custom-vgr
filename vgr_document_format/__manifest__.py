@@ -8,11 +8,14 @@
     "website": "http://www.xtendoo.es",
     "category": "Website",
     "depends": [
+        "account",
+        "sale",
     ],
     "data": [
         'views/report_saleorder_document.xml',
         'views/report_saleorder_document_without_value.xml',
         'views/report_invoice_document.xml',
+        'views/report_saleorder_document_without_vat.xml',
     ],
     "license": "AGPL-3",
     "installable": True,
