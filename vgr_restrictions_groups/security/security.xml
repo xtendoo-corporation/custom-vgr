@@ -4,6 +4,7 @@
         <record id="group_modify_quotations" model="res.groups">
             <field name="name">Modificador de Presupuestos</field>
             <field name="category_id" ref="base.module_category_sales"/>
+            <field name="comment">Usuarios con permiso para modificar presupuestos en el sistema</field>
         </record>
         <!-- Grupo de usuarios que pueden crear productos -->
         <record id="group_create_products" model="res.groups">
