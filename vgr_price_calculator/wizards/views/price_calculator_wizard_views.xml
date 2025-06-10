@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_price_calculator_wizard_form" model="ir.ui.view">
+        <field name="name">vgr.price.calculator.wizard.form</field>
+        <field name="model">vgr.price.calculator.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Calculadora de Precios">
+                <sheet>
+                    <group>
+                        <field name="product_id"/>
+                        <field name="order_line_id" invisible="1"/>
+                        <field name="price_group_id"/>
+                        <field name="meters_linear"/>
+                        <field name="elect_integration"/>
+                        <field name="price_total_without_integration"/>
+                        <field name="price_total"/>
+                        <field name="factory_cost"/>
+                        <field name="factory_discount" widget="percentage"/>
+                        <field name="discounted_cost"/>
+                        <field name="percent_margin" widget="percentage"/>
+                        <field name="margin"/>
+                        <field name="transport_cost"/>
+                        <field name="price_mob_transport"/>
+                        <field name="build_cost"/>
+                    </group>
+                </sheet>
+                <footer>
+                    <button name="apply_calculated_price" string="Aplicar" type="object" class="btn-primary"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_price_calculator_wizard" model="ir.actions.act_window">
+        <field name="name">Calculadora de Precios</field>
+        <field name="res_model">vgr.price.calculator.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+</odoo>
