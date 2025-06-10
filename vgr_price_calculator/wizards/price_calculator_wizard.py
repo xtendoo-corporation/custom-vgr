@@ -22,7 +22,7 @@ class PriceCalculatorWizard(models.TransientModel):
     percent_margin = fields.Float(string='% Margen', digits=(5, 2), default=0.0)
     margin = fields.Float(string='Margen', digits='Product Price', compute='_compute_margin')
     transport_cost = fields.Float(string='Transporte', digits='Product Price', default=0.0)
-    price_mob_transport = fields.Float(string='Precio de transporte', digits='Product Price', default=0.0, compute='_compute_price_mob_transport')
+    price_mob_transport = fields.Float(string='Precio Mob+Trans', digits='Product Price', default=0.0, compute='_compute_price_mob_transport')
 
     @api.depends('transport_cost', 'discounted_cost','margin')
     def _compute_price_mob_transport(self):
