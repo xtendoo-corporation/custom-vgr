@@ -67,5 +67,27 @@ class PriceCalculatorWizard(models.TransientModel):
             self.order_line_id.write({
                 'price_unit': self.price_mob_transport,
                 'purchase_price': self.build_cost + self.discounted_cost,
+                'elect_integration': self.elect_integration,
+                'factory_cost': self.factory_cost,
+                'factory_discount': self.factory_discount,
+                'percent_margin': self.percent_margin,
+                'transport_cost': self.transport_cost,
+                'price_mob_transport' : self.price_mob_transport,
             })
         return {'type': 'ir.actions.act_window_close'}
+
+    @api.model
+    def default_get(self, fields_list):
+        res = super().default_get(fields_list)
+        order_line_id = self.env.context.get('default_order_line_id')
+        if order_line_id:
+            line = self.env['sale.order.line'].browse(order_line_id)
+            res.update({
+                'elect_integration': line.elect_integration,
+                'factory_cost': line.factory_cost,
+                'factory_discount': line.factory_discount,
+                'percent_margin': line.percent_margin,
+                'transport_cost': line.transport_cost,
+                'price_mob_transport': line.price_mob_transport,
+            })
+        return res
