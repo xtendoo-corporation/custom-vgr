@@ -1,0 +1,53 @@
+<odoo>
+    <record id="view_mail_activity_calendar_sale_order" model="ir.ui.view">
+        <field name="name">mail.activity.calendar.sale.order</field>
+        <field name="model">mail.activity</field>
+        <field name="arch" type="xml">
+            <calendar string="Actividades de Pedidos de Venta"
+                      quick_create="False"
+                      date_start="date_start"
+                      date_stop="date_deadline"
+                      color="user_id"
+                      create="true">
+                <field name="activity_type_id"/>
+                <field name="sale_order_partner_id"/>
+                <field name="description"/>
+            </calendar>
+        </field>
+    </record>
+
+    <record id="action_mail_activity_calendar_sale_order" model="ir.actions.act_window">
+        <field name="name">Actividades de Pedidos de Venta</field>
+        <field name="res_model">mail.activity</field>
+        <field name="view_mode">calendar,tree,form</field>
+        <field name="view_id" ref="view_mail_activity_calendar_sale_order"/>
+        <field name="domain">[('res_model','=','sale.order')]</field>
+        <field name="context">{'default_res_model': 'sale.order'}</field>
+
+    </record>
+
+    <menuitem id="menu_mail_activity_calendar_sale_order"
+              name="Actividades de Pedidos de Venta"
+              parent="sale.sale_order_menu"
+              action="action_mail_activity_calendar_sale_order"/>
+
+    <record id="view_mail_activity_form_custom" model="ir.ui.view">
+        <field name="name">mail.activity.form.custom</field>
+        <field name="model">mail.activity</field>
+        <field name="inherit_id" ref="mail.mail_activity_view_form_popup"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='activity_type_id']" position="after">
+                <field name="sale_order_id"/>
+                <field name="sale_order_partner_id" readonly="1"/>
+                <field name="description" placeholder="Descripción de la actividad..."/>
+            </xpath>
+            <xpath expr="//field[@name='date_deadline']" position="before">
+                <field name="date_start" placeholder="Fecha de inicio de la actividad"/>
+            </xpath>
+            <xpath expr="//field[@name='res_model']" position="attributes">
+                <attribute name="invisible">1</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

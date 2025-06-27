@@ -6,7 +6,7 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
             <xpath expr="//sheet/div[@class='oe_button_box' and @name='button_box']" position="before">
-                  <field name="vgr_state_presupuesto" widget="statusbar" options="{'clickable': '1'}"
+                <field name="vgr_state_presupuesto" widget="statusbar" options="{'clickable': '1'}"
                        style="float: right;"
                        invisible="state == 'sale' or state == 'cancel'"/>
                 <field name="vgr_state_pedido" widget="statusbar" options="{'clickable': '1'}"
@@ -31,7 +31,7 @@
                        decoration-danger="vgr_alert_type == 'danger'"
                        decoration-warning="vgr_alert_type == 'warning'"
                        decoration-info="vgr_alert_type == 'normal'"
-                       />
+                />
             </xpath>
         </field>
     </record>
@@ -47,7 +47,7 @@
                        decoration-danger="vgr_alert_type == 'danger'"
                        decoration-warning="vgr_alert_type == 'warning'"
                        decoration-info="vgr_alert_type == 'normal'"
-                       />
+                />
             </xpath>
         </field>
     </record>
@@ -58,8 +58,19 @@
         <field name="inherit_id" ref="sale.view_sale_order_kanban"/>
         <field name="arch" type="xml">
             <xpath expr="//kanban" position="attributes">
-                <attribute name="default_group_by">vgr_state_selection</attribute>
-                <attribute name="context">{'group_expand': True}</attribute>
+                <!--                <attribute name="default_group_by">vgr_state_selection</attribute>-->
+                <!--                <attribute name="context">{'group_expand': True}</attribute>-->
+            </xpath>
+        </field>
+    </record>
+
+     <record id="sot_view_order_form_inherit" model="ir.ui.view">
+        <field name="name">sale.order.form.type_id.editable.inherit</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale_order_type.sot_view_order_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='type_id']" position="attributes">
+                <attribute name="readonly">0</attribute>
             </xpath>
         </field>
     </record>
