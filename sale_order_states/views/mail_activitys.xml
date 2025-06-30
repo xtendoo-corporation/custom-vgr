@@ -30,7 +30,9 @@
     <menuitem id="menu_mail_activity_calendar_sale_order"
               name="Actividades de Pedidos de Venta"
               parent="sale.sale_order_menu"
-              action="action_mail_activity_calendar_sale_order"/>
+              action="action_mail_activity_calendar_sale_order"
+              sequence="100"
+            />
 
     <record id="view_mail_activity_form_custom" model="ir.ui.view">
         <field name="name">mail.activity.form.custom</field>
