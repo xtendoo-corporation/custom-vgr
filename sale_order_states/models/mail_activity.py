@@ -63,17 +63,6 @@ class MailActivity(models.TransientModel):
         if self.activity_type_id and self.sale_order_id:
             self.summary = f"{self.activity_type_id.name} - {self.sale_order_id.client_order_ref or ''}"
 
-    # def action_open_document(self):
-    #     # Lógica para abrir el documento relacionado
-    #     pass
-
-    def name_get(self):
-        result = []
-        for record in self:
-            name = record.summary or str(record.id)
-            result.append((record.id, name))
-        return result
-
     name = fields.Char(string='Nombre', compute='_compute_name', store=True)
 
     @api.depends('summary')
@@ -85,6 +74,8 @@ class MailActivity(models.TransientModel):
         result = []
         for rec in self:
             name = rec.summary or rec.name or str(rec.id)
+            if '-' in name:
+                name = name.replace('-', '\n', 1)  # Solo el primer guion
             result.append((rec.id, name))
         return result
 

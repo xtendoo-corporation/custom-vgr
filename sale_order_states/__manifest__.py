@@ -18,5 +18,10 @@
         "data/states_sequence.xml",
         "views/mail_activitys.xml",
     ],
+    "assets": {
+        "web.assets_backend": [
+            "sale_order_states/static/src/css/calendar_multiline.scss",
+        ],
+    },
     "installable": True,
 }
