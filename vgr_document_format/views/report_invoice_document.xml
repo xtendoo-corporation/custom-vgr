@@ -103,41 +103,18 @@
                 style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
         </xpath>
 
-        <!-- Filtrar líneas que no deben imprimirse -->
-        <xpath expr="//t[@t-foreach='o.invoice_line_ids.filtered(lambda line: not line.display_type)']" position="replace">
-            <t t-foreach="o.invoice_line_ids.filtered(lambda line: not line.display_type and not line.not_printable)" t-as="line">
-                <tr t-att-class="'bg-200 fw-bold o_line_section' if line.display_type == 'line_section' else 'fst-italic o_line_note' if line.display_type == 'line_note' else ''">
-                    <t t-if="not line.display_type" name="account_invoice_line_accountable">
-                        <td name="account_invoice_line_name"><span t-field="line.name" t-options="{'widget': 'text'}"/></td>
-                        <td class="text-end">
-                            <span t-field="line.quantity"/>
-                            <span t-field="line.product_uom_id"  groups="uom.group_uom"/>
-                        </td>
-                        <td t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                            <span class="text-nowrap" t-field="line.price_unit"/>
-                        </td>
-                        <td t-if="display_discount" t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                            <span class="text-nowrap" t-field="line.discount"/>
-                        </td>
-                        <td t-attf-class="text-end {{ 'd-none d-md-table-cell' if report_type == 'html' else '' }}">
-                            <span t-field="line.tax_ids" t-options="{'widget': 'many2many_tags'}"/>
-                        </td>
-                        <td class="text-end o_price_total">
-                            <span class="text-nowrap" t-field="line.price_subtotal"/>
-                        </td>
-                    </t>
-                    <t t-elif="line.display_type == 'line_section'">
-                        <td colspan="99">
-                            <span t-field="line.name" t-options="{'widget': 'text'}"/>
-                        </td>
-                    </t>
-                    <t t-elif="line.display_type == 'line_note'">
-                        <td colspan="99">
-                            <span t-field="line.name" t-options="{'widget': 'text'}"/>
-                        </td>
-                    </t>
-                </tr>
-            </t>
+        <!-- Ocultar líneas marcadas como not_printable usando CSS -->
+        <xpath expr="//tbody" position="inside">
+            <style>
+                tr[data-line-not-printable="true"] {
+                    display: none !important;
+                }
+            </style>
+        </xpath>
+
+        <!-- Añadir atributo data para identificar líneas no imprimibles -->
+        <xpath expr="//tr[@t-foreach]" position="attributes">
+            <attribute name="t-att-data-line-not-printable">line.not_printable</attribute>
         </xpath>
     </template>
 </odoo>
