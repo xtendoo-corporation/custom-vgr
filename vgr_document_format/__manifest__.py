@@ -16,6 +16,7 @@
         'views/report_saleorder_document_without_value.xml',
         'views/report_invoice_document.xml',
         'views/report_saleorder_document_without_vat.xml',
+        'views/account_move_line_views.xml',
     ],
     "license": "AGPL-3",
     "installable": True,
