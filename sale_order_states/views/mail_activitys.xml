@@ -39,9 +39,27 @@
         <field name="model">mail.activity.schedule</field>
         <field name="inherit_id" ref="mail.mail_activity_schedule_view_form"/>
         <field name="arch" type="xml">
-                        <xpath expr="//field[@name='summary']" position="attributes">
-                            <attribute name="string">Nombre</attribute>
-                        </xpath>
+            <!-- Eliminar botón Mark Done del header de forma condicional -->
+            <xpath expr="//form/sheet" position="before">
+                <header>
+                    <!-- Texto indicativo cuando está completada -->
+                    <div class="alert alert-success"
+                         role="alert"
+                         style="display: inline-block; margin: 5px 8px 5px 0; padding: 8px 15px;"
+                         invisible="not is_activity_completed">
+                        <i class="fa fa-check-circle"
+                           style="margin-right: 5px;"
+                           title="Actividad completada"
+                           aria-label="Actividad completada"/>
+                        <strong>Actividad Completada</strong> - Esta actividad ya ha sido marcada como completada
+                    </div>
+                    <field name="is_activity_completed" invisible="1"/>
+                </header>
+            </xpath>
+
+            <xpath expr="//field[@name='summary']" position="attributes">
+                <attribute name="string">Nombre</attribute>
+            </xpath>
             <xpath expr="//field[@name='activity_type_id']" position="after">
                 <field name="sale_order_id"/>
                 <field name="sale_order_partner_id" readonly="1"/>

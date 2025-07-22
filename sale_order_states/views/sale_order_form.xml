@@ -5,7 +5,17 @@
         <field name="model">sale.order</field>
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//sheet/div[@class='oe_button_box' and @name='button_box']" position="before">
+            <!-- Smart button para ver actividades -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button type="object"
+                        name="action_view_activity_schedules"
+                        class="oe_stat_button"
+                        icon="fa-calendar-check-o">
+                    <field name="activity_schedule_count" widget="statinfo" string="Actividades"/>
+                </button>
+            </xpath>
+
+            <xpath expr="//sheet/div[hasclass('oe_button_box') and @name='button_box']" position="before">
                 <field name="vgr_state_presupuesto" widget="statusbar" options="{'clickable': '1'}"
                        style="float: right;"
                        invisible="state == 'sale' or state == 'cancel'"/>
