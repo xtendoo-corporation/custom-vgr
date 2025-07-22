@@ -60,8 +60,24 @@ class MailActivity(models.TransientModel):
 
     @api.onchange('activity_type_id', 'sale_order_id')
     def _onchange_summary(self):
-        if self.activity_type_id and self.sale_order_id:
-            self.summary = f"{self.activity_type_id.name} - {self.sale_order_id.client_order_ref or ''}"
+        if self.activity_type_id:
+            # Empezar con el nombre del tipo de actividad
+            summary_parts = [self.activity_type_id.name]
+
+            # Añadir client_order_ref si existe
+            if self.sale_order_id and self.sale_order_id.client_order_ref:
+                summary_parts.append(self.sale_order_id.client_order_ref)
+
+            # Añadir sale_order_id (nombre del pedido) si existe
+            if self.sale_order_id:
+                summary_parts.append(self.sale_order_id.name)
+
+            # Añadir sale_order_partner_id (nombre del cliente) si existe
+            if self.sale_order_partner_id:
+                summary_parts.append(self.sale_order_partner_id.name)
+
+            # Unir todas las partes con " - "
+            self.summary = " - ".join(summary_parts)
 
     name = fields.Char(string='Nombre', compute='_compute_name', store=True)
 
