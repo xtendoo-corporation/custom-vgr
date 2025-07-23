@@ -99,22 +99,12 @@
         </xpath>
 
         <xpath expr="//table" position="after">
-            <div
-                style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
+            <div style="border: 1px solid #3a5240; padding: 10px; width: 100%; margin-bottom: 20px; background-color: rgba(58, 82, 64, 0.7);"/>
         </xpath>
 
-        <!-- Ocultar líneas marcadas como not_printable usando CSS -->
-        <xpath expr="//tbody" position="inside">
-            <style>
-                tr[data-line-not-printable="true"] {
-                    display: none !important;
-                }
-            </style>
-        </xpath>
-
-        <!-- Añadir atributo data para identificar líneas no imprimibles -->
-        <xpath expr="//tr[@t-foreach]" position="attributes">
-            <attribute name="t-att-data-line-not-printable">line.not_printable</attribute>
+        <!-- Filtrar líneas que no deben imprimirse -->
+        <xpath expr="//t[@t-set='lines']" position="replace">
+            <t t-set="lines" t-value="o.invoice_line_ids.filtered(lambda l: not l.not_printable).sorted(key=lambda l: (-l.sequence, l.date, l.move_name, -l.id), reverse=True)"/>
         </xpath>
     </template>
 </odoo>
