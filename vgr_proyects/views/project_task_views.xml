@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <record id="view_task_form2_inherit" model="ir.ui.view">
+            <field name="name">project.task.form.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_form2"/>
+            <field name="arch" type="xml">
+                <xpath expr="//div[@id='date_deadline_and_recurring_task']" position="after">
+                    <label for="execution_date"/>
+                    <div class="d-inline-flex w-100">
+                        <field name="execution_date" nolabel="1" widget="datetime"/>
+                    </div>
+                    <label for="related_contact_id"/>
+                    <div class="d-inline-flex w-100">
+                        <field name="related_contact_id" nolabel="1" options="{'no_create': True, 'no_open': True}"/>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</odoo>
