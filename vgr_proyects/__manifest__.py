@@ -8,7 +8,7 @@
         - Añade campo Fecha de ejecución a las tareas
         - Añade campo Contacto relacionado a las tareas
     """,
-    'author': 'VGR',
+    'author': 'Xtendoo (Abraham)',
     'website': '',
     'depends': [
         'project',
