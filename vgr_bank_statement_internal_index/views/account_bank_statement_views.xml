@@ -1,67 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vista de lista personalizada para líneas del bank statement -->
-    <record id="view_bank_statement_line_tree_internal_index" model="ir.ui.view">
-        <field name="name">account.bank.statement.line.tree.internal.index</field>
-        <field name="model">account.bank.statement.line</field>
-        <field name="arch" type="xml">
-            <tree editable="bottom" create="0" delete="0">
-                <field name="date"/>
-                <field name="payment_ref" string="Label"/>
-                <field name="partner_id"/>
-                <field name="amount" sum="Total"/>
-                <field name="internal_index" string="Internal Index"/>
-                <field name="running_balance"/>
-                <field name="currency_id" column_invisible="True"/>
-                <field name="foreign_currency_id" column_invisible="True"/>
-                <field name="amount_currency"
-                       column_invisible="not foreign_currency_id"
-                       groups="base.group_multi_currency"/>
-                <field name="is_reconciled" column_invisible="True"/>
-                <field name="statement_complete" column_invisible="True"/>
-                <field name="statement_valid" column_invisible="True"/>
-            </tree>
-        </field>
-    </record>
 
     <!-- Heredar la vista de formulario del bank statement para usar nuestra vista personalizada -->
     <record id="view_bank_statement_form_internal_index" model="ir.ui.view">
         <field name="name">account.bank.statement.form.internal.index</field>
         <field name="model">account.bank.statement</field>
-        <field name="inherit_id" ref="account.view_bank_statement_form"/>
+        <field name="inherit_id" ref="account_statement_base.view_bank_statement_form"/>
         <field name="arch" type="xml">
-            <xpath expr="//field[@name='line_ids']" position="attributes">
-                <attribute name="context">{'default_journal_id': journal_id, 'tree_view_ref': 'bank_statement_internal_index.view_bank_statement_line_tree_internal_index'}</attribute>
+            <!-- Añadir botones en el header -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <button name="action_recalculate_sequences"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-sort-numeric-asc"
+                        string="Recalcular Secuencias"
+                        help="Recalcula las secuencias basándose en la fecha"/>
+                <button name="action_recalculate_internal_index"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-refresh"
+                        string="Recalcular Índices"
+                        help="Fuerza el recálculo del internal_index de todas las líneas"/>
             </xpath>
         </field>
     </record>
 
-    <!-- Opción alternativa: Vista de formulario para líneas individuales con internal_index -->
-    <record id="view_bank_statement_line_form_internal_index" model="ir.ui.view">
-        <field name="name">account.bank.statement.line.form.internal.index</field>
-        <field name="model">account.bank.statement.line</field>
-        <field name="arch" type="xml">
-            <form string="Bank Statement Line">
-                <sheet>
-                    <group>
-                        <group>
-                            <field name="date"/>
-                            <field name="payment_ref"/>
-                            <field name="partner_id"/>
-                            <field name="account_number"/>
-                            <field name="internal_index" readonly="1"/>
-                        </group>
-                        <group>
-                            <field name="amount"/>
-                            <field name="currency_id" invisible="1"/>
-                            <field name="foreign_currency_id"/>
-                            <field name="amount_currency"
-                                   invisible="not foreign_currency_id"/>
-                            <field name="running_balance" readonly="1"/>
-                        </group>
-                    </group>
-                </sheet>
-            </form>
-        </field>
-    </record>
 </odoo>
