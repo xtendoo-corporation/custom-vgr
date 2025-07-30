@@ -15,10 +15,10 @@
         'base',
     ],
     'data': [
+        'security/ir.model.access.csv',
         'views/project_task_views.xml',
     ],
     'installable': True,
     'auto_install': False,
     'application': False,
 }
-

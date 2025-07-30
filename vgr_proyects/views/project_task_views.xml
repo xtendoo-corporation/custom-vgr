@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data>
+        <!-- Herencia de la vista formulario -->
         <record id="view_task_form2_inherit" model="ir.ui.view">
             <field name="name">project.task.form.inherit</field>
             <field name="model">project.task</field>
@@ -15,7 +16,72 @@
                     <div class="d-inline-flex w-100">
                         <field name="related_contact_id" nolabel="1" options="{'no_create': True, 'no_open': True}"/>
                     </div>
+                    <label for="project_state_on_completion"/>
+                    <div class="d-inline-flex w-100">
+                        <field name="project_state_on_completion" nolabel="1" options="{'no_create': True, 'no_open': True}" placeholder="Seleccionar estado del proyecto..."/>
+                    </div>
                 </xpath>
+            </field>
+        </record>
+
+        <!-- Herencia de la vista kanban -->
+        <record id="view_task_kanban_inherit" model="ir.ui.view">
+            <field name="name">project.task.kanban.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_kanban"/>
+            <field name="arch" type="xml">
+                <!-- Asegurar que los campos personalizados estén disponibles -->
+                <field name="color" position="after">
+                    <field name="execution_date"/>
+                </field>
+
+                <xpath expr="//div[@name='date_deadline']" position="replace">
+                    <div t-if="record.date_deadline.raw_value" name="date_deadline"  class="text-muted">
+                        <i class="fa fa-calendar me-1" title="Fecha límite"/>
+                        <strong>Fecha límite: </strong>
+                        <field name="date_deadline" widget="date"/>
+                        <span class="text-muted"> (<t t-esc="Math.ceil((new Date(record.date_deadline.raw_value) - new Date(new Date(record.date_deadline.raw_value).getFullYear(), 0, 1) + 86400000) / 604800000)"/>)</span>
+                    </div>
+                    <div t-if="record.execution_date.raw_value" class="text-muted mt-1">
+                        <i class="fa fa-clock-o me-1" title="Fecha de realización"/>
+                        <strong>Fecha realización: </strong>
+                        <field name="execution_date" widget="date"/>
+                        <span class="text-muted"> (<t t-esc="Math.ceil((new Date(record.execution_date.raw_value) - new Date(new Date(record.execution_date.raw_value).getFullYear(), 0, 1) + 86400000) / 604800000)"/>)</span>
+                    </div>
+                </xpath>
+            </field>
+        </record>
+
+        <!-- Herencia de la vista calendario -->
+        <record id="view_task_calendar_inherit" model="ir.ui.view">
+            <field name="name">project.task.calendar.inherit</field>
+            <field name="model">project.task</field>
+            <field name="inherit_id" ref="project.view_task_calendar"/>
+            <field name="arch" type="xml">
+                <!-- Agregar el campo calendar_color después del último campo existente -->
+                <field name="task_properties" position="after">
+                    <field name="calendar_color"/>
+                </field>
+
+                <!-- Reemplazar completamente el atributo color del calendario -->
+                <calendar position="replace">
+                    <calendar date_start="date_deadline" string="Tasks" mode="month" color="calendar_color" event_limit="5" hide_time="true" event_open_popup="true" quick_create="0" show_unusual_days="True" js_class="project_task_calendar" scales="month,year">
+                        <field name="allow_milestones" invisible="1"/>
+                        <field name="project_id" widget="project" invisible="context.get('default_project_id', False)"/>
+                        <field name="display_in_project" invisible="1"/>
+                        <field name="subtask_count" invisible="1"/>
+                        <field name="milestone_id" invisible="not allow_milestones or not milestone_id"/>
+                        <field name="user_ids" widget="many2many_avatar_user" invisible="not user_ids"/>
+                        <field name="partner_id" invisible="not partner_id"/>
+                        <field name="priority" widget="priority"/>
+                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="not tag_ids"/>
+                        <field name="stage_id" invisible="not project_id or not stage_id"/>
+                        <field name="state" widget="project_task_state_selection" readonly="1"/>
+                        <field name="personal_stage_id" string="Personal Stage" options="{'no_open': True}" invisible="project_id or not personal_stage_id"/>
+                        <field name="task_properties"/>
+                        <field name="calendar_color"/>
+                    </calendar>
+                </calendar>
             </field>
         </record>
     </data>
