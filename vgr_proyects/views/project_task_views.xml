@@ -38,13 +38,13 @@
                 <xpath expr="//div[@name='date_deadline']" position="replace">
                     <div t-if="record.date_deadline.raw_value" name="date_deadline"  class="text-muted">
                         <i class="fa fa-calendar me-1" title="Fecha límite"/>
-                        <strong>Fecha límite: </strong>
+                        <strong>Límite: </strong>
                         <field name="date_deadline" widget="date"/>
                         <span class="text-muted"> (<t t-esc="Math.ceil((new Date(record.date_deadline.raw_value) - new Date(new Date(record.date_deadline.raw_value).getFullYear(), 0, 1) + 86400000) / 604800000)"/>)</span>
                     </div>
                     <div t-if="record.execution_date.raw_value" class="text-muted mt-1">
                         <i class="fa fa-clock-o me-1" title="Fecha de realización"/>
-                        <strong>Fecha realización: </strong>
+                        <strong>Realización: </strong>
                         <field name="execution_date" widget="date"/>
                         <span class="text-muted"> (<t t-esc="Math.ceil((new Date(record.execution_date.raw_value) - new Date(new Date(record.execution_date.raw_value).getFullYear(), 0, 1) + 86400000) / 604800000)"/>)</span>
                     </div>
@@ -63,24 +63,9 @@
                     <field name="calendar_color"/>
                 </field>
 
-                <!-- Reemplazar completamente el atributo color del calendario -->
-                <calendar position="replace">
-                    <calendar date_start="date_deadline" string="Tasks" mode="month" color="calendar_color" event_limit="5" hide_time="true" event_open_popup="true" quick_create="0" show_unusual_days="True" js_class="project_task_calendar" scales="month,year">
-                        <field name="allow_milestones" invisible="1"/>
-                        <field name="project_id" widget="project" invisible="context.get('default_project_id', False)"/>
-                        <field name="display_in_project" invisible="1"/>
-                        <field name="subtask_count" invisible="1"/>
-                        <field name="milestone_id" invisible="not allow_milestones or not milestone_id"/>
-                        <field name="user_ids" widget="many2many_avatar_user" invisible="not user_ids"/>
-                        <field name="partner_id" invisible="not partner_id"/>
-                        <field name="priority" widget="priority"/>
-                        <field name="tag_ids" widget="many2many_tags" options="{'color_field': 'color'}" invisible="not tag_ids"/>
-                        <field name="stage_id" invisible="not project_id or not stage_id"/>
-                        <field name="state" widget="project_task_state_selection" readonly="1"/>
-                        <field name="personal_stage_id" string="Personal Stage" options="{'no_open': True}" invisible="project_id or not personal_stage_id"/>
-                        <field name="task_properties"/>
-                        <field name="calendar_color"/>
-                    </calendar>
+                <!-- Cambiar solo el atributo color del calendario -->
+                <calendar position="attributes">
+                    <attribute name="color">calendar_color</attribute>
                 </calendar>
             </field>
         </record>

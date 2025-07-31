@@ -1,5 +1,6 @@
 from odoo import fields, models, api
 import logging
+import re
 
 _logger = logging.getLogger(__name__)
 
@@ -47,6 +48,35 @@ class ProjectTask(models.Model):
             task.calendar_color = color
             _logger.info(f"Task {task.name} - State: {task.state} - Color: {color}")
 
+    def _add_state_icon_to_name(self):
+        """Add state icon to task name based on current state"""
+        if self.name:
+            state_icons = {
+                '1_done': '✅',           # Check mark - Completadas
+                '01_in_progress': '🔄',   # Refresh - En progreso
+                '1_canceled': '❌',       # X mark - Canceladas
+                '02_changes_requested': '🔄', # Refresh - Cambios solicitados
+                '03_approved': '✅',      # Check mark - Aprobadas
+                '04_waiting_normal': '⏳' # Hourglass - En espera
+            }
+
+            # Remover cualquier icono previo del nombre
+            clean_name = re.sub(r'^[✅🔄❌⏳📋]\s*', '', self.name)
+
+            # Agregar el nuevo icono según el estado
+            if self.state in state_icons:
+                new_name = f"{state_icons[self.state]} {clean_name}"
+            else:
+                new_name = f"📋 {clean_name}"
+
+            # Solo actualizar si el nombre cambió para evitar recursión
+            if new_name != self.name:
+                print("*"*100)
+                print(f"Task {clean_name} state changed to {self.state} - Adding icon")
+                print("*" * 100)
+                # Usar super().write() para evitar recursión infinita
+                super(ProjectTask, self).write({'name': new_name})
+
     def write(self, vals):
         """Override write to detect when task is marked as done and update project state"""
         # Guardar estados anteriores
@@ -54,6 +84,11 @@ class ProjectTask(models.Model):
 
         # Llamar al método padre
         result = super().write(vals)
+
+        # Si se cambió el estado, actualizar el icono en el nombre
+        if 'state' in vals:
+            for task in self:
+                task._add_state_icon_to_name()
 
         # Verificar si alguna tarea cambió a estado completado
         for task in self:
@@ -88,4 +123,12 @@ class ProjectTask(models.Model):
                     message_type='notification'
                 )
 
+        return result
+
+    @api.model
+    def create(self, vals):
+        """Override create to add icon when task is created"""
+        result = super().create(vals)
+        # Agregar icono al nombre cuando se crea la tarea
+        result._add_state_icon_to_name()
         return result
