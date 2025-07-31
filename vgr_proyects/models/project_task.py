@@ -54,14 +54,14 @@ class ProjectTask(models.Model):
             state_icons = {
                 '1_done': '✅',           # Check mark - Completadas
                 '01_in_progress': '🔄',   # Refresh - En progreso
-                '1_canceled': '❌',       # X mark - Canceladas
+                '1_canceled': '🛑',       # X roja (stop) - Canceladas
                 '02_changes_requested': '🔄', # Refresh - Cambios solicitados
                 '03_approved': '✅',      # Check mark - Aprobadas
                 '04_waiting_normal': '⏳' # Hourglass - En espera
             }
 
             # Remover cualquier icono previo del nombre
-            clean_name = re.sub(r'^[✅🔄❌⏳📋]\s*', '', self.name)
+            clean_name = re.sub(r'^[✅🔄🛑⏳📋]\s*', '', self.name)
 
             # Agregar el nuevo icono según el estado
             if self.state in state_icons:
