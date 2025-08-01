@@ -7,9 +7,9 @@
             <field name="inherit_id" ref="project.edit_project"/>
             <field name="arch" type="xml">
                 <xpath expr="//field[@name='partner_id']" position="after">
-                    <field name="customer_name" string="Nombre del cliente" required="1"/>
-                    <field name="customer_phone" string="Teléfono del cliente" required="1"/>
-                    <field name="customer_address" string="Dirección del cliente" required="1"/>
+                    <field name="customer_name" string="Nombre" required="1"/>
+                    <field name="customer_phone" string="Teléfono" required="1"/>
+                    <field name="customer_address" string="Dirección" required="1"/>
                 </xpath>
             </field>
         </record>
