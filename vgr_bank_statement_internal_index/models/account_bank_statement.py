@@ -30,3 +30,4 @@ class AccountBankStatementLine(models.Model):
             st_line.internal_index = f'{st_line.date.strftime("%Y%m%d")}' \
                                       f'{st_line.sequence:0>10}' \
                                       f'{st_line._origin.id:0>10}'
+
