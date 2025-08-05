@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <!-- Vista tree independiente para las líneas del extracto bancario con columna internal_index -->
+
+    <!-- Vista tree personalizada para las líneas del bank statement -->
     <record id="view_bank_statement_line_tree_internal_index" model="ir.ui.view">
         <field name="name">account.bank.statement.line.tree.internal.index</field>
         <field name="model">account.bank.statement.line</field>
@@ -10,11 +11,16 @@
                 <field name="internal_index" optional="hide"/>
                 <field name="date"/>
                 <field name="payment_ref" string="Label"/>
-                <field name="partner_id" optional="show"/>
+                <field name="partner_id"/>
                 <field name="amount" sum="Total"/>
                 <field name="running_balance" string="Saldo" readonly="1"/>
-                <field name="company_id" invisible="1"/>
-                <field name="currency_id" invisible="1"/>
+                <button name="action_undo_reconciliation" type="object" icon="fa-undo" title="Deshacer Conciliación" string="Revertie la conciliación" invisible="not is_reconciled"/>
+                <button name="action_open_journal_entry" type="object" icon="fa-folder" title="Ver Entradas del Diario"/>
+                <field name="is_reconciled" invisible="1" column_invisible="1"/>
+                <field name="suitable_journal_ids" invisible="1" column_invisible="1"/>
+                <field name="journal_id" invisible="1" column_invisible="1"/>
+                <field name="company_id" invisible="1" column_invisible="1"/>
+                <field name="currency_id" invisible="1" column_invisible="1"/>
             </tree>
         </field>
     </record>
@@ -48,10 +54,10 @@
                         type="object"
                         class="oe_stat_button"
                         icon="fa-trash"
-                        string="Borrar Líneas"
-                        help="Borra todas las líneas del extracto bancario"
-                        confirm="¿Está seguro de que desea borrar todas las líneas del extracto bancario?"/>
+                        string="Borrar Líneas Vacías"
+                        help="Elimina líneas que no tienen statement_id"/>
             </xpath>
         </field>
     </record>
+
 </odoo>
