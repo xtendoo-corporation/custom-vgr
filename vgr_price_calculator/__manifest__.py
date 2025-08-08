@@ -14,6 +14,7 @@
         'views/product_category_views.xml',
         'views/price_group_views.xml',
         'views/sale_views.xml',
+        'views/price_template_item_views.xml',
         'wizards/views/price_calculator_wizard_views.xml',
         "security/ir.model.access.csv",
     ],

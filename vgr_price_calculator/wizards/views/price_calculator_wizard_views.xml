@@ -23,6 +23,14 @@
                         <field name="price_mob_transport"/>
                         <field name="build_cost"/>
                     </group>
+                    <field name="price_item_ids">
+                        <tree editable="bottom">
+                            <field name="name"/>
+                            <field name="cost"/>
+                            <field name="profit_percent" widget="percentage"/>
+                            <field name="price"/>
+                        </tree>
+                    </field>
                 </sheet>
                 <footer>
                     <button name="apply_calculated_price" string="Aplicar" type="object" class="btn-primary"/>
@@ -36,6 +44,5 @@
         <field name="name">Calculadora de Precios</field>
         <field name="res_model">vgr.price.calculator.wizard</field>
         <field name="view_mode">form</field>
-        <field name="target">new</field>
     </record>
 </odoo>

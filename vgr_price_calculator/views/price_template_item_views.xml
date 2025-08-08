@@ -1,0 +1,46 @@
+<odoo>
+    <!-- Vista Tree -->
+    <record id="view_price_template_item_tree" model="ir.ui.view">
+        <field name="name">vgr.price.template.item.tree</field>
+        <field name="model">vgr.price.template.item</field>
+        <field name="arch" type="xml">
+            <tree string="Plantillas de Elementos de Precio">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="view_price_template_item_form" model="ir.ui.view">
+        <field name="name">vgr.price.template.item.form</field>
+        <field name="model">vgr.price.template.item</field>
+        <field name="arch" type="xml">
+            <form string="Plantilla de Elemento de Precio">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción de ventana -->
+    <record id="action_price_template_item" model="ir.actions.act_window">
+        <field name="name">Plantillas de Elementos de Precio</field>
+        <field name="res_model">vgr.price.template.item</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primera plantilla de elemento de precio
+            </p>
+        </field>
+    </record>
+
+    <!-- Elemento de menú en ajustes de ventas -->
+    <menuitem id="menu_price_template_item"
+              name="Plantillas de Elementos de Precio"
+              action="action_price_template_item"
+              parent="sale.menu_sale_config"
+              sequence="20"/>
+</odoo>
