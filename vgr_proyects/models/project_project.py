@@ -1,5 +1,6 @@
 from odoo import models, fields, api
 from odoo.exceptions import UserError
+import re
 
 class ProjectProject(models.Model):
     _inherit = 'project.project'
@@ -57,7 +58,25 @@ class ProjectProject(models.Model):
             except Exception:
                 last_number = 0
         default['name'] = f"#{last_number + 1}"
-        return super().copy(default)
+
+        # Realizar la copia y guardar el resultado
+        new_project = super().copy(default)
+
+        # Buscar todas las tareas asociadas al nuevo proyecto
+        tasks = self.env['project.task'].search([('project_id', '=', new_project.id)])
+
+        # Actualizar el nombre de cada tarea para incluir el nombre del proyecto
+        for task in tasks:
+            # Limpiar cualquier referencia anterior al proyecto
+            clean_name = re.sub(r'\s*\[.*\]\s*$', '', task.name)
+
+            # Añadir el nombre del proyecto al final
+            new_name = f"{clean_name} [{new_project.name}]"
+
+            # Actualizar el nombre sin desencadenar el flujo normal de write
+            super(models.Model, task).write({'name': new_name})
+
+        return new_project
 
     def unlink(self):
         for project in self:
@@ -65,3 +84,29 @@ class ProjectProject(models.Model):
                 # Mostrar mensaje informativo en vez de error
                 raise UserError('No se puede eliminar un proyecto marcado como plantilla.')
         return super().unlink()
+
+    def write(self, vals):
+        # Guardar resultado de la operación write original
+        result = super().write(vals)
+
+        # Verificar si se modificó el nombre del proyecto
+        if 'name' in vals:
+            project_name = vals['name']
+
+            # Buscar todas las tareas asociadas a este proyecto
+            tasks = self.env['project.task'].search([('project_id', 'in', self.ids)])
+
+            # Actualizar el nombre de cada tarea para incluir el nombre del proyecto
+            for task in tasks:
+                # Limpiar cualquier referencia anterior al proyecto
+                clean_name = re.sub(r'\s*\[.*\]\s*$', '', task.name)
+
+                # Añadir el nombre del proyecto al final
+                new_name = f"{clean_name} [{project_name}]"
+
+                # Actualizar el nombre sin desencadenar el flujo normal de write
+                # para evitar recursión con el método personalizado de tareas
+                super(models.Model, task).write({'name': new_name})
+
+
+        return result
