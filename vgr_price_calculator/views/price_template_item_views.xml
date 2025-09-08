@@ -6,6 +6,9 @@
         <field name="arch" type="xml">
             <tree string="Plantillas de Elementos de Precio">
                 <field name="name"/>
+                <field name="cost"/>
+                <field name="profit_percent" widget="percentage"/>
+                <field name="price"/>
             </tree>
         </field>
     </record>
@@ -19,6 +22,9 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="cost"/>
+                        <field name="profit_percent" widget="percentage"/>
+                        <field name="price"/>
                     </group>
                 </sheet>
             </form>
