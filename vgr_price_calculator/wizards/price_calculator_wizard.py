@@ -40,7 +40,6 @@ class PriceCalculatorWizard(models.Model):
             if record.price_group_id and not record.price_group_price:
                 record.price_group_price = record.price_group_id.price
 
-
     meters_linear = fields.Float(
         string='M/L',
     )
@@ -71,20 +70,45 @@ class PriceCalculatorWizard(models.Model):
         digits='Product Price',
         compute='_compute_margin'
     )
+    price_item_ids = fields.One2many(
+        'vgr.price.calculator.line',
+        'calculator_id',
+        string='Elementos de Precio'
+    )
     price_mob = fields.Float(
         string='Precio Mob',
         digits='Product Price',
         default=0.0,
         compute='_compute_price_mob'
     )
-    price_item_ids = fields.One2many(
-        'vgr.price.calculator.line',
-        'calculator_id',
-        string='Elementos de Precio'
+
+    intermediary_percent = fields.Float(
+        string='% Intermediario',
+        digits=(5, 2),
+        default=0.0
     )
 
+    intermediary_price = fields.Float(
+        string='Precio Intermediario',
+        digits='Product Price',
+        compute='_compute_intermediary_price',
+        readonly = False
+    )
+
+    price_mob_without_intermediary = fields.Float(
+        string='Precio Mob sin Intermediario',
+        digits='Product Price',
+        compute='_compute_price_mob_without_intermediary'
+    )
+
+    @api.depends('price_mob_without_intermediary', 'intermediary_percent')
+    def _compute_intermediary_price(self):
+        for record in self:
+            record.intermediary_price = record.price_mob_without_intermediary * (
+                record.intermediary_percent / 100.0) if record.intermediary_percent else 0.0
+
     @api.depends('discounted_cost', 'margin', 'price_item_ids.price')
-    def _compute_price_mob(self):
+    def _compute_price_mob_without_intermediary(self):
         for record in self:
             base_price = 0.0
             if record.discounted_cost:
@@ -94,7 +118,12 @@ class PriceCalculatorWizard(models.Model):
             items_price_total = sum(line.price for line in record.price_item_ids)
 
             # Precio final es la suma del precio base más el total de los items
-            record.price_mob = base_price + items_price_total
+            record.price_mob_without_intermediary = base_price + items_price_total
+
+    @api.depends('price_mob_without_intermediary', 'intermediary_price')
+    def _compute_price_mob(self):
+        for record in self:
+            record.price_mob = record.price_mob_without_intermediary + record.intermediary_price
 
     @api.depends('discounted_cost', 'percent_margin')
     def _compute_margin(self):
@@ -108,7 +137,6 @@ class PriceCalculatorWizard(models.Model):
     def _compute_discounted_cost(self):
         for record in self:
             record.discounted_cost = record.factory_cost * record.factory_discount + record.factory_cost
-
 
     @api.onchange('elect_integration')
     def _onchange_elect_integration(self):
@@ -151,6 +179,8 @@ class PriceCalculatorWizard(models.Model):
                 'percent_margin': self.percent_margin or 0.0,
                 'elect_integration': self.elect_integration or False,
                 'price_mob': self.price_mob or 0.0,
+                'intermediary_percent': self.intermediary_percent or 0.0,
+                'intermediary_price': self.intermediary_price or 0.0,
             }
             if hasattr(self, 'price_mob_transport'):
                 values_to_save['price_mob_transport'] = self.price_mob_transport or 0.0
@@ -181,7 +211,8 @@ class PriceCalculatorWizard(models.Model):
                 # Cargamos los valores del wizard existente
                 for field in ['factory_cost', 'factory_discount', 'percent_margin',
                               'elect_integration', 'price_mob_transport',
-                              'meters_linear', 'price_group_id', 'price_mob']:
+                              'meters_linear', 'price_group_id', 'price_mob',
+                              'intermediary_percent', 'intermediary_price']:
                     if field in fields_list and field in existing_wizard:
                         res[field] = existing_wizard[field]
 

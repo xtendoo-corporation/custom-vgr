@@ -1,0 +1,23 @@
+<odoo>
+    <record id="view_quotation_tree_with_project" model="ir.ui.view">
+        <field name="name">sale.order.tree.with.project</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_quotation_tree_with_onboarding"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='user_id']" position="after">
+                <field name="related_project_ids" widget="many2many_tags" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <record id="view_order_tree_with_project" model="ir.ui.view">
+    <field name="name">sale.order.tree.with.project.confirmed</field>
+    <field name="model">sale.order</field>
+    <field name="inherit_id" ref="sale.view_order_tree"/>
+    <field name="arch" type="xml">
+        <xpath expr="//field[@name='user_id']" position="after">
+            <field name="related_project_ids" widget="many2many_tags" optional="show"/>
+        </xpath>
+    </field>
+</record>
+</odoo>

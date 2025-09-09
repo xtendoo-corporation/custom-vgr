@@ -7,20 +7,30 @@
             <form string="Calculadora de Precios">
                 <sheet>
                     <group>
-                        <field name="product_id"/>
-                        <field name="order_line_id" invisible="1"/>
-                        <field name="price_group_id"/>
-                        <field name="price_group_price"/>
-                        <field name="meters_linear"/>
-                        <field name="elect_integration"/>
-                        <field name="price_total_without_integration"/>
-                        <field name="price_total"/>
-                        <field name="factory_cost"/>
-                        <field name="factory_discount" widget="percentage"/>
-                        <field name="discounted_cost"/>
-                        <field name="percent_margin" widget="percentage"/>
-                        <field name="margin"/>
-                        <field name="price_mob"/>
+                        <group>
+                            <field name="product_id"/>
+                            <field name="order_line_id" invisible="1"/>
+                            <field name="price_group_id"/>
+                            <field name="price_group_price"/>
+                            <field name="meters_linear"/>
+                            <field name="elect_integration"/>
+                            <field name="price_total_without_integration"/>
+                            <field name="price_total"/>
+                        </group>
+                        <group>
+                            <field name="factory_cost"/>
+                            <field name="factory_discount" widget="percentage"/>
+                            <field name="discounted_cost"/>
+                            <field name="percent_margin" widget="percentage"/>
+                            <field name="intermediary_percent"/>
+                            <field name="intermediary_price"/>
+                            <field name="price_mob_without_intermediary"/>
+                            <label for="margin" class="fw-bold fs-4"/>
+                            <field name="margin" decoration-bf="1" class="fs-4" nolabel="1"/>
+
+                            <label for="price_mob" class="fw-bold fs-4"/>
+                            <field name="price_mob" decoration-bf="1" class="fs-4" nolabel="1"/>
+                        </group>
                     </group>
                     <field name="price_item_ids">
                         <tree editable="bottom">
