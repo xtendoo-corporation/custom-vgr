@@ -4,3 +4,5 @@ from . import sale_order_line
 from . import sale_order
 from . import price_template_item
 from . import price_calculator_line
+from . import price_template_item_worktop
+from . import vgr_price_calculator_encimera_template

@@ -63,3 +63,4 @@ class SaleOrderLine(models.Model):
                     'default_order_line_id': self.id,
                 }
             }
+

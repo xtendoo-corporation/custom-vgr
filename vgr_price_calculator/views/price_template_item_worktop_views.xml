@@ -1,0 +1,67 @@
+<odoo>
+    <!-- Vista Tree -->
+    <record id="view_price_template_item_worktop_tree" model="ir.ui.view">
+        <field name="name">vgr.price.template.item.worktop.tree</field>
+        <field name="model">vgr.price.template.item.worktop</field>
+        <field name="arch" type="xml">
+            <tree string="Plantillas de Elementos de Precio para Encimeras">
+                <field name="name"/>
+                <field name="length"/>
+                <field name="width"/>
+                <field name="auxiliary_number"/>
+                <field name="is_special_measurement"/>
+                <field name="ml_measurement"/>
+                <field name="unit_price"/>
+                <field name="margin"/>
+                <field name="total_price"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="view_price_template_item_worktop_form" model="ir.ui.view">
+        <field name="name">vgr.price.template.item.worktop.form</field>
+        <field name="model">vgr.price.template.item.worktop</field>
+        <field name="arch" type="xml">
+            <form string="Plantilla de Elemento de Precio para Encimeras">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                            <field name="length"/>
+                            <field name="width"/>
+                            <field name="auxiliary_number"/>
+                        </group>
+                        <group>
+                            <field name="is_special_measurement"/>
+                            <field name="ml_measurement" />
+                            <field name="unit_price"/>
+                            <field name="margin"/>
+                            <field name="external_price"/>
+                            <field name="total_price" readonly_unless="external_price"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción de ventana -->
+    <record id="action_price_template_item_worktop" model="ir.actions.act_window">
+        <field name="name">Plantillas de Elementos de Encimeras</field>
+        <field name="res_model">vgr.price.template.item.worktop</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea tu primera plantilla de encimera
+            </p>
+        </field>
+    </record>
+
+    <!-- Elemento de menú en ajustes de ventas -->
+    <menuitem id="menu_price_template_item_worktop"
+              name="Plantillas de Elementos de Encimeras"
+              action="action_price_template_item_worktop"
+              parent="sale.menu_sale_config"
+              sequence="21"/>
+</odoo>
