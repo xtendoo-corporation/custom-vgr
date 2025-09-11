@@ -125,25 +125,35 @@ class PriceCalculatorEncimeraWizard(models.Model):
 
             if existing_wizard:
                 _logger.info(f"Encontrado wizard existente ID: {existing_wizard.id}")
-                # Cargamos valores básicos del wizard existente
+
+                # Copiamos los valores básicos
                 for field in ['grosor', 'marca', 'encimera_canto', 'metros_lineales', 'precio_ml']:
-                    if field in fields_list and hasattr(existing_wizard, field):
+                    if field in fields_list:
                         res[field] = existing_wizard[field]
 
                 # Buscamos plantillas existentes
-                existing_templates = self.env['vgr.price.calculator.encimera.template'].search([
+                templates = self.env['vgr.price.calculator.encimera.template'].search([
                     ('calculator_id', '=', existing_wizard.id)
                 ])
 
-                if existing_templates:
-                    _logger.info(f"Encontradas {len(existing_templates)} plantillas existentes")
-                    # CORREGIDO: Usar comando (6, 0, ids) para vincular plantillas existentes
-                    res['worktop_template_ids'] = [(6, 0, existing_templates.ids)]
+                if templates:
+                    _logger.info(f"Encontradas {len(templates)} plantillas para cargar")
+                    # Usamos (0, 0, {...}) para crear nuevas plantillas en memoria
+                    res['worktop_template_ids'] = [(0, 0, {
+                        'name': template.name,
+                        'length': template.length,
+                        'width': template.width,
+                        'is_special_measurement': template.is_special_measurement,
+                        'ml_measurement': template.ml_measurement,
+                        'unit_price': template.unit_price,
+                        'margin': template.margin,
+                        'template_id': template.template_id.id if template.template_id else False,
+                    }) for template in templates]
                 else:
-                    _logger.info("No se encontraron plantillas para el wizard existente, creando nuevas")
+                    _logger.info("No hay plantillas existentes, creando por defecto")
                     self._create_default_templates_in_memory(res, order_line_id)
             else:
-                _logger.info("No se encontró wizard existente, creando plantillas por defecto")
+                _logger.info("No existe wizard, creando plantillas por defecto")
                 self._create_default_templates_in_memory(res, order_line_id)
 
         return res
@@ -171,12 +181,31 @@ class PriceCalculatorEncimeraWizard(models.Model):
     def apply_calculated_price(self):
         _logger.info(f"Aplicando calculadora ID: {self.id}, precio: {self.total_price_encimera}")
         if self.order_line_id:
-            # Actualizamos la línea de pedido con el precio calculado
+            # Actualizamos la línea de pedido con el precio
             self.order_line_id.write({
                 'price_unit': self.total_price_encimera,
             })
 
-            # Guardamos los valores del wizard actual
+            # CORRECCIÓN: Eliminar wizards antiguos EXCEPTO este
+            old_wizards = self.env['vgr.price.calculator.encimera.wizard'].search([
+                ('order_line_id', '=', self.order_line_id.id),
+                ('id', '!=', self.id)
+            ])
+
+            # Eliminar plantillas asociadas a wizards antiguos
+            old_templates = self.env['vgr.price.calculator.encimera.template'].search([
+                ('calculator_id', 'in', old_wizards.ids)
+            ])
+            if old_templates:
+                _logger.info(f"Eliminando {len(old_templates)} plantillas de wizards antiguos")
+                old_templates.unlink()
+
+            # Eliminar wizards antiguos
+            if old_wizards:
+                _logger.info(f"Eliminando {len(old_wizards)} wizards antiguos")
+                old_wizards.unlink()
+
+            # Actualizamos el wizard actual
             self.write({
                 'grosor': self.grosor,
                 'marca': self.marca,
@@ -185,17 +214,35 @@ class PriceCalculatorEncimeraWizard(models.Model):
                 'precio_ml': self.precio_ml,
             })
 
-            # CORREGIDO: Ya no eliminamos plantillas, solo actualizamos las existentes
+            # Guardar las plantillas actualizadas
             for template in self.worktop_template_ids:
-                template.write({
-                    'name': template.name,
-                    'length': template.length,
-                    'width': template.width,
-                    'is_special_measurement': template.is_special_measurement,
-                    'ml_measurement': template.ml_measurement,
-                    'unit_price': template.unit_price,
-                    'margin': template.margin,
-                })
+                if template.calculator_id.id == self.id:
+                    # Actualizar plantilla existente
+                    template.write({
+                        'name': template.name,
+                        'length': template.length,
+                        'width': template.width,
+                        'is_special_measurement': template.is_special_measurement,
+                        'ml_measurement': template.ml_measurement,
+                        'unit_price': template.unit_price,
+                        'margin': template.margin,
+                    })
+                else:
+                    # Crear nueva plantilla si no está asociada al wizard actual
+                    self.env['vgr.price.calculator.encimera.template'].create({
+                        'calculator_id': self.id,
+                        'name': template.name,
+                        'length': template.length,
+                        'width': template.width,
+                        'is_special_measurement': template.is_special_measurement,
+                        'ml_measurement': template.ml_measurement,
+                        'unit_price': template.unit_price,
+                        'margin': template.margin,
+                        'template_id': template.template_id.id if template.template_id else False,
+                    })
+
+            # Forzar guardado inmediato
+            self.env.cr.commit()
 
         return {'type': 'ir.actions.act_window_close'}
 
