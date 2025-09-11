@@ -137,17 +137,8 @@ class PriceCalculatorEncimeraWizard(models.Model):
 
                 if existing_templates:
                     _logger.info(f"Encontradas {len(existing_templates)} plantillas existentes")
-                    # Importante: Crear nuevas plantillas in-memory copiando valores desde las existentes
-                    res['worktop_template_ids'] = [(0, 0, {
-                        'name': template.name,
-                        'length': template.length,
-                        'width': template.width,
-                        'is_special_measurement': template.is_special_measurement,
-                        'ml_measurement': template.ml_measurement,
-                        'unit_price': template.unit_price,
-                        'margin': template.margin,
-                        'template_id': template.template_id.id if template.template_id else False,
-                    }) for template in existing_templates]
+                    # CORREGIDO: Usar comando (6, 0, ids) para vincular plantillas existentes
+                    res['worktop_template_ids'] = [(6, 0, existing_templates.ids)]
                 else:
                     _logger.info("No se encontraron plantillas para el wizard existente, creando nuevas")
                     self._create_default_templates_in_memory(res, order_line_id)
@@ -194,19 +185,9 @@ class PriceCalculatorEncimeraWizard(models.Model):
                 'precio_ml': self.precio_ml,
             })
 
-            # Primero limpiamos las plantillas existentes para evitar duplicados
-            existing_templates = self.env['vgr.price.calculator.encimera.template'].search([
-                ('calculator_id', '=', self.id)
-            ])
-            if existing_templates:
-                _logger.info(f"Eliminando {len(existing_templates)} plantillas existentes antes de guardar nuevas")
-                existing_templates.unlink()
-
-            # Creamos nuevas plantillas a partir de las actuales (aunque sean in-memory)
+            # CORREGIDO: Ya no eliminamos plantillas, solo actualizamos las existentes
             for template in self.worktop_template_ids:
-                _logger.info(f"Guardando plantilla: {template.name} (is_record: {bool(template.id)})")
-                template_data = {
-                    'calculator_id': self.id,
+                template.write({
                     'name': template.name,
                     'length': template.length,
                     'width': template.width,
@@ -214,13 +195,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                     'ml_measurement': template.ml_measurement,
                     'unit_price': template.unit_price,
                     'margin': template.margin,
-                    'template_id': template.template_id.id if template.template_id else False,
-                }
-                # Siempre creamos una nueva para evitar problemas de referencia
-                self.env['vgr.price.calculator.encimera.template'].create(template_data)
-
-            # Forzar commit para asegurar persistencia
-            self.env.cr.commit()
+                })
 
         return {'type': 'ir.actions.act_window_close'}
 
