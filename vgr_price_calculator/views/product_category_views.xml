@@ -6,8 +6,7 @@
         <field name="inherit_id" ref="stock_account.view_category_property_form_stock"/>
         <field name="arch" type="xml">
             <xpath expr="//field[@name='property_cost_method']" position="after">
-                <field name="calculate_cost_by_formula" string="Calcular el coste mediante fórmula (Mobiliario)"/>
-                <field name="calculate_cost_by_formula_encimera" string="Calcular el coste mediante fórmula (Encimera)"/>
+                <field name="calculate_cost_by_formula_type" string="Tipo de Cálculo de Coste"/>
             </xpath>
         </field>
     </record>

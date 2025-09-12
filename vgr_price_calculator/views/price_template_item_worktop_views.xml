@@ -6,14 +6,8 @@
         <field name="arch" type="xml">
             <tree string="Plantillas de Elementos de Precio para Encimeras">
                 <field name="name"/>
-                <field name="length"/>
-                <field name="width"/>
                 <field name="auxiliary_number"/>
                 <field name="is_special_measurement"/>
-                <field name="ml_measurement"/>
-                <field name="unit_price"/>
-                <field name="margin"/>
-                <field name="total_price"/>
             </tree>
         </field>
     </record>
@@ -26,20 +20,9 @@
             <form string="Plantilla de Elemento de Precio para Encimeras">
                 <sheet>
                     <group>
-                        <group>
-                            <field name="name"/>
-                            <field name="length"/>
-                            <field name="width"/>
-                            <field name="auxiliary_number"/>
-                        </group>
-                        <group>
-                            <field name="is_special_measurement"/>
-                            <field name="ml_measurement" />
-                            <field name="unit_price"/>
-                            <field name="margin"/>
-                            <field name="external_price"/>
-                            <field name="total_price" readonly_unless="external_price"/>
-                        </group>
+                        <field name="name"/>
+                        <field name="auxiliary_number"/>
+                        <field name="is_special_measurement"/>
                     </group>
                 </sheet>
             </form>

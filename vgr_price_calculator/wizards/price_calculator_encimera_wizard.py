@@ -34,12 +34,15 @@ class PriceCalculatorEncimeraWizard(models.Model):
             if record.grosor < 12.0 or record.grosor > 20.0:
                 raise ValidationError("El grosor debe estar entre 12 y 20 mm (ambos incluidos).")
 
+    # Campos de cabecera trasladados desde el modelo de plantillas
+    length = fields.Float('Largo', digits=(16, 2), help="Largo de la encimera")
+    width = fields.Float('Ancho', digits=(16, 2), help="Ancho de la encimera")
+
     marca = fields.Char(string='Marca')
     encimera_canto = fields.Char(string='Encimera Canto')
     metros_lineales = fields.Float(string='M/L', digits=(16, 2))
     material = fields.Char(string='Material', compute='_compute_material', store=True)
     precio_ml = fields.Float(string='Precio M/L del Material', digits='Product Price')
-    price = fields.Float(string='Precio calculado', digits='Product Price', compute='_compute_price')
 
     worktop_template_ids = fields.One2many(
         'vgr.price.calculator.encimera.template',
@@ -94,22 +97,39 @@ class PriceCalculatorEncimeraWizard(models.Model):
 
             record.material = material_value
 
-    @api.depends('metros_lineales', 'precio_ml')
-    def _compute_price(self):
-        for record in self:
-            record.price = record.metros_lineales * record.precio_ml
-
-    @api.depends('price', 'worktop_template_ids.total_price')
+    @api.depends('metros_lineales', 'precio_ml', 'worktop_template_ids.total_price')
     def _compute_total_price_encimera(self):
         for record in self:
+            # Sumar el precio de las plantillas
             template_total = sum(template.total_price for template in record.worktop_template_ids)
-            record.total_price_encimera = record.price + template_total
+            record.total_price_encimera =  template_total
 
     @api.onchange('precio_ml')
     def _onchange_precio_ml_templates(self):
         if self.precio_ml and self.worktop_template_ids:
             for template in self.worktop_template_ids:
                 template.unit_price = template.ml_measurement * self.precio_ml
+
+    # Nuevo onchange para actualizar las plantillas cuando cambian length o width
+    @api.onchange('length', 'width')
+    def _onchange_dimensions(self):
+        if self.worktop_template_ids:
+            for template in self.worktop_template_ids:
+                # Solo actualizar dimensiones para plantillas que requieren cálculo especial
+                if template.is_special_measurement:
+                    # Actualizar las dimensiones de las plantillas con los valores de cabecera
+                    template.length = self.length
+                    template.width = self.width
+                    # Recalcular ml_measurement para cálculo especial
+                    template.ml_measurement = template.length * template.width * 0.60
+                else:
+                    # Para plantillas sin cálculo especial, no usar dimensiones de cabecera
+                    # ml_measurement se mantendrá como está o se puede editar manualmente
+                    pass
+
+                # Recalcular unit_price si hay precio_ml (para todas las plantillas)
+                if self.precio_ml:
+                    template.unit_price = template.ml_measurement * self.precio_ml
 
     @api.model
     def default_get(self, fields_list):
@@ -126,8 +146,8 @@ class PriceCalculatorEncimeraWizard(models.Model):
             if existing_wizard:
                 _logger.info(f"Encontrado wizard existente ID: {existing_wizard.id}")
 
-                # Copiamos los valores básicos
-                for field in ['grosor', 'marca', 'encimera_canto', 'metros_lineales', 'precio_ml']:
+                # Copiamos los valores básicos incluyendo los nuevos campos de cabecera
+                for field in ['grosor', 'marca', 'encimera_canto', 'metros_lineales', 'precio_ml', 'length', 'width']:
                     if field in fields_list:
                         res[field] = existing_wizard[field]
 
@@ -159,23 +179,44 @@ class PriceCalculatorEncimeraWizard(models.Model):
         return res
 
     def _create_default_templates_in_memory(self, res, order_line_id):
-        # Método auxiliar para crear plantillas in-memory (igual que la calculadora que funciona)
+        # Método auxiliar para crear plantillas in-memory
         template_bases = self.env['vgr.price.template.item.worktop'].search([])
         _logger.info(f"Encontradas {len(template_bases)} plantillas base")
 
         if template_bases:
             # Creamos plantillas in-memory usando comandos Odoo (0, 0, {...})
-            # IMPORTANTE: Esto es lo que hace la calculadora que funciona
-            res['worktop_template_ids'] = [(0, 0, {
-                'name': template.name,
-                'length': template.length,
-                'width': template.width,
-                'is_special_measurement': template.is_special_measurement,
-                'ml_measurement': template.ml_measurement,
-                'unit_price': template.unit_price,  # CLAVE: Copiar exactamente
-                'margin': template.margin,  # CLAVE: Copiar exactamente
-                'template_id': template.id,
-            }) for template in template_bases]
+            # Solo usar dimensiones de cabecera para plantillas que requieren cálculo especial
+            default_length = res.get('length', 0.0)
+            default_width = res.get('width', 0.0)
+
+            template_data = []
+            for template in template_bases:
+                if template.is_special_measurement:
+                    # Para plantillas con cálculo especial, usar dimensiones de cabecera
+                    template_data.append({
+                        'name': template.name,
+                        'length': default_length,
+                        'width': default_width,
+                        'is_special_measurement': template.is_special_measurement,
+                        'ml_measurement': default_length * default_width * 0.60,
+                        'unit_price': 0.0,
+                        'margin': 0.0,
+                        'template_id': template.id,
+                    })
+                else:
+                    # Para plantillas sin cálculo especial, no usar dimensiones de cabecera
+                    template_data.append({
+                        'name': template.name,
+                        'length': 0.0,  # No heredar de cabecera
+                        'width': 0.0,   # No heredar de cabecera
+                        'is_special_measurement': template.is_special_measurement,
+                        'ml_measurement': 0.0,  # Se editará manualmente
+                        'unit_price': 0.0,
+                        'margin': 0.0,
+                        'template_id': template.id,
+                    })
+
+            res['worktop_template_ids'] = [(0, 0, data) for data in template_data]
             _logger.info(f"Creadas {len(template_bases)} plantillas in-memory")
 
     def apply_calculated_price(self):

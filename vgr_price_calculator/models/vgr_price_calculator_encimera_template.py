@@ -33,6 +33,7 @@ class PriceCalculatorEncimeraTemplate(models.Model):  # Cambiado a persistente
         for record in self:
             # Fórmula corregida: margen + precio unitario (sin multiplicar por ml_measurement)
             record.total_price = record.margin + record.unit_price
+
     @api.onchange('length', 'width', 'is_special_measurement')
     def _onchange_dimensions(self):
         for record in self:

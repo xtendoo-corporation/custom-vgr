@@ -12,21 +12,22 @@ class SaleOrderLine(models.Model):
         default=False,
     )
 
-    @api.depends('product_id', 'product_id.categ_id.calculate_cost_by_formula',
-                 'product_id.categ_id.calculate_cost_by_formula_encimera')
+    @api.depends('product_id', 'product_id.categ_id.calculate_cost_by_formula_type')
     def _compute_needs_price_calculator(self):
         for line in self:
             line.needs_price_calculator = bool(line.product_id and
                                                line.product_id.categ_id and
-                                               (line.product_id.categ_id.calculate_cost_by_formula or
-                                                line.product_id.categ_id.calculate_cost_by_formula_encimera))
+                                               line.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera'))
+
     @api.onchange('product_id')
     def product_id_change(self):
-        if self.product_id and self.product_id.categ_id.calculate_cost_by_formula:
+        if (self.product_id and
+            self.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera')):
+            calculator_type = 'Mobiliario' if self.product_id.categ_id.calculate_cost_by_formula_type == 'mobiliario' else 'Encimera'
             return {
                 'warning': {
-                    'title': 'Calculadora de Precios',
-                    'message': 'Este producto requiere calculadora de precios. Utilice el botón "Abrir Calculadora" después de guardar la línea.'
+                    'title': f'Calculadora de Precios ({calculator_type})',
+                    'message': f'Este producto requiere calculadora de precios de {calculator_type.lower()}. Utilice el botón "Abrir Calculadora" después de guardar la línea.'
                 }
             }
         return {}
@@ -36,8 +37,10 @@ class SaleOrderLine(models.Model):
         if not self.needs_price_calculator:
             return
 
-        # Determinar qué tipo de calculadora usar
-        if self.product_id.categ_id.calculate_cost_by_formula_encimera:
+        # Determinar qué tipo de calculadora usar basado en el nuevo campo Selection
+        formula_type = self.product_id.categ_id.calculate_cost_by_formula_type
+
+        if formula_type == 'encimera':
             # Usar calculadora de encimera
             return {
                 'type': 'ir.actions.act_window',
@@ -50,11 +53,11 @@ class SaleOrderLine(models.Model):
                     'default_order_line_id': self.id,
                 }
             }
-        else:
+        elif formula_type == 'mobiliario':
             # Usar calculadora de mobiliario (original)
             return {
                 'type': 'ir.actions.act_window',
-                'name': 'Calculadora de Precios',
+                'name': 'Calculadora de Precios (Mobiliario)',
                 'res_model': 'vgr.price.calculator.wizard',
                 'view_mode': 'form',
                 'target': 'new',
@@ -63,4 +66,3 @@ class SaleOrderLine(models.Model):
                     'default_order_line_id': self.id,
                 }
             }
-
