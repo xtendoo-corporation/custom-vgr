@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <template id="portal_tasks_list_inherit" inherit_id="project.portal_tasks_list" name="Portal: My Tasks with Timesheets">
+        <!-- Modificar encabezados de tabla - quitar Estado -->
+        <xpath expr="//thead//tr" position="replace">
+            <tr>
+                <th>Tarea</th>
+                <th class="text-center">Fecha</th>
+                <th class="text-center">Horas invertidas</th>
+                <th class="text-center">Acciones</th>
+            </tr>
+        </xpath>
+
+        <!-- Filtrar solo las tareas marcadas como visibles en el portal y modificar columnas -->
+        <xpath expr="//t[@t-foreach='tasks']" position="replace">
+            <t t-foreach="tasks.filtered(lambda t: t.portal_visible)" t-as="task">
+                <tr>
+                    <!-- Nombre de la tarea -->
+                    <td>
+                        <a t-attf-href="/my/task/#{task.id}?{{ keep_query() }}">
+                            <span t-field="task.name"/>
+                        </a>
+                    </td>
+                    <!-- Fecha (sin palabra límite) -->
+                    <td class="text-center">
+                        <span t-field="task.date_deadline" t-options='{"widget": "date"}'/>
+                    </td>
+                    <!-- Horas invertidas -->
+                    <td class="text-center">
+                        <span t-if="task.effective_hours">
+                            <t t-esc="task.effective_hours"/> h
+                        </span>
+                        <span t-else="">0 h</span>
+                    </td>
+                    <!-- Acción Ver -->
+                    <td class="text-center">
+                        <a t-attf-href="/my/task/#{task.id}?{{ keep_query() }}" class="btn btn-primary btn-sm">
+                            <i class="fa fa-eye"/> Ver
+                        </a>
+                    </td>
+                </tr>
+            </t>
+        </xpath>
+    </template>
+
+    <!-- Vista de formulario de tareas con checkbox de visibilidad en portal -->
+    <record id="view_task_form2_portal_inherit" model="ir.ui.view">
+        <field name="name">project.task.form.portal.inherit</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//div[@id='date_deadline_and_recurring_task']" position="after">
+                <label for="portal_visible"/>
+                <div class="d-inline-flex w-100">
+                    <field name="portal_visible" nolabel="1"/>
+                    <span class="text-muted ms-2">Mostrar esta tarea en el portal de clientes</span>
+                </div>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Vista del portal de pedidos - mostrar archivos adjuntos con restricciones -->
+    <template id="portal_order_attachments" name="Portal Order Attachments Section">
+        <div class="mt-4" t-if="order_attachments and sale_order.has_paid_invoice">
+            <h5>Archivos adjuntos</h5>
+            <div class="list-group">
+                <t t-foreach="order_attachments" t-as="attachment">
+                    <div class="list-group-item d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <i class="fa fa-paperclip me-2 text-muted"/>
+                            <div>
+                                <span t-field="attachment.name" class="fw-medium"/>
+                                <t t-if="attachment.file_size">
+                                    <small class="text-muted d-block">
+                                        <t t-esc="'%.1f' % (attachment.file_size / 1024.0)"/> KB
+                                    </small>
+                                </t>
+                            </div>
+                        </div>
+                        <div>
+                            <a t-attf-href="/my/orders/#{sale_order.id}/attachment/#{attachment.id}?access_token=#{sale_order.access_token}"
+                               class="btn btn-sm btn-primary">
+                                <i class="fa fa-download me-1"/>Descargar
+                            </a>
+                        </div>
+                    </div>
+                </t>
+            </div>
+        </div>
+    </template>
+
+    <!-- Herencia específica de la vista del portal de pedidos de venta -->
+    <template id="sale_order_portal_inherit_attachments" inherit_id="sale.sale_order_portal_template" name="Sale Order Portal - Add Attachments">
+        <xpath expr="//div[@id='sale_order_communication']" position="before">
+            <t t-if="order_attachments and sale_order.has_paid_invoice">
+                <hr/>
+                <div id="vgr_order_attachments">
+                    <t t-call="vgr_portal.portal_order_attachments"/>
+                </div>
+            </t>
+        </xpath>
+    </template>
+
+</odoo>
