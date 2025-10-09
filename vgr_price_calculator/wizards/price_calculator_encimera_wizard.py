@@ -108,7 +108,9 @@ class PriceCalculatorEncimeraWizard(models.Model):
     def _onchange_precio_ml_templates(self):
         if self.precio_ml and self.worktop_template_ids:
             for template in self.worktop_template_ids:
-                template.unit_price = template.ml_measurement * self.precio_ml
+                # Solo actualizar si la plantilla NO tiene un precio individual definido
+                if not template.precio_ml_individual:
+                    template.unit_price = template.ml_measurement * self.precio_ml
 
     # Nuevo onchange para actualizar las plantillas cuando cambian length o width
     @api.onchange('length', 'width')
@@ -127,8 +129,8 @@ class PriceCalculatorEncimeraWizard(models.Model):
                     # ml_measurement se mantendrá como está o se puede editar manualmente
                     pass
 
-                # Recalcular unit_price si hay precio_ml (para todas las plantillas)
-                if self.precio_ml:
+                # Recalcular unit_price solo si NO tiene precio individual
+                if not template.precio_ml_individual and self.precio_ml:
                     template.unit_price = template.ml_measurement * self.precio_ml
 
     @api.model
@@ -165,6 +167,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'width': template.width,
                         'is_special_measurement': template.is_special_measurement,
                         'ml_measurement': template.ml_measurement,
+                        'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
                         'template_id': template.template_id.id if template.template_id else False,
@@ -199,6 +202,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'width': default_width,
                         'is_special_measurement': template.is_special_measurement,
                         'ml_measurement': default_length * default_width * 0.60,
+                        'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
                         'margin': 0.0,
                         'template_id': template.id,
@@ -211,6 +215,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'width': 0.0,   # No heredar de cabecera
                         'is_special_measurement': template.is_special_measurement,
                         'ml_measurement': 0.0,  # Se editará manualmente
+                        'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
                         'margin': 0.0,
                         'template_id': template.id,
@@ -265,6 +270,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'width': template.width,
                         'is_special_measurement': template.is_special_measurement,
                         'ml_measurement': template.ml_measurement,
+                        'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
                     })
@@ -277,6 +283,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'width': template.width,
                         'is_special_measurement': template.is_special_measurement,
                         'ml_measurement': template.ml_measurement,
+                        'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
                         'template_id': template.template_id.id if template.template_id else False,

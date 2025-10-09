@@ -1,7 +1,7 @@
 from odoo import api, fields, models
 
 
-class PriceCalculatorEncimeraTemplate(models.Model):  # Cambiado a persistente
+class PriceCalculatorEncimeraTemplate(models.Model):
     _name = 'vgr.price.calculator.encimera.template'
     _description = 'Plantilla temporal para cálculos de encimera'
 
@@ -18,8 +18,27 @@ class PriceCalculatorEncimeraTemplate(models.Model):  # Cambiado a persistente
     length = fields.Float('Largo', digits=(16, 2))
     width = fields.Float('Ancho', digits=(16, 2))
     is_special_measurement = fields.Boolean('Requiere cálculo especial')
-    ml_measurement = fields.Float('M/L (Medición Encimera)', digits=(16, 2))
-    unit_price = fields.Float('M/L', digits=(16, 2), default=0.0)
+    ml_measurement = fields.Float(
+        'M/L (Medición Encimera)',
+        digits=(16, 2),
+        compute='_compute_ml_measurement',
+        store=True,
+        readonly=False
+    )
+    precio_ml_individual = fields.Float(
+        string='Precio M/L Individual',
+        digits='Product Price',
+        default=0.0,
+        help='Precio por metro lineal específico para esta línea. Si está vacío, se usará el precio global.'
+    )
+    unit_price = fields.Float(
+        'M/L',
+        digits=(16, 2),
+        default=0.0,
+        compute='_compute_unit_price',
+        store=True,
+        readonly=False
+    )
     margin = fields.Float('Margen', digits=(16, 2), default=0.0)
     total_price = fields.Float(
         'Precio Total',
@@ -28,21 +47,32 @@ class PriceCalculatorEncimeraTemplate(models.Model):  # Cambiado a persistente
         digits=(16, 2)
     )
 
-    @api.depends('ml_measurement', 'unit_price', 'margin')
-    def _compute_total_price(self):
-        for record in self:
-            # Fórmula corregida: margen + precio unitario (sin multiplicar por ml_measurement)
-            record.total_price = record.margin + record.unit_price
-
-    @api.onchange('length', 'width', 'is_special_measurement')
-    def _onchange_dimensions(self):
+    @api.depends('length', 'width', 'is_special_measurement')
+    def _compute_ml_measurement(self):
+        """Calcular ml_measurement según las dimensiones"""
         for record in self:
             if record.is_special_measurement:
                 record.ml_measurement = record.length * record.width * 0.60
             else:
                 record.ml_measurement = record.length
 
-    @api.onchange('ml_measurement')
-    def _onchange_unit_price(self):
-        if self.calculator_id and self.calculator_id.precio_ml:
-            self.unit_price = self.ml_measurement * self.calculator_id.precio_ml
+    @api.depends('ml_measurement', 'precio_ml_individual', 'calculator_id.precio_ml')
+    def _compute_unit_price(self):
+        """Calcular unit_price según ml_measurement y el precio a usar"""
+        for record in self:
+            # Determinar qué precio usar
+            if record.precio_ml_individual:
+                precio_a_usar = record.precio_ml_individual
+            elif record.calculator_id and record.calculator_id.precio_ml:
+                precio_a_usar = record.calculator_id.precio_ml
+            else:
+                precio_a_usar = 0.0
+
+            # Calcular unit_price
+            record.unit_price = record.ml_measurement * precio_a_usar
+
+    @api.depends('unit_price', 'margin')
+    def _compute_total_price(self):
+        for record in self:
+            # Fórmula: margen + precio unitario
+            record.total_price = record.margin + record.unit_price

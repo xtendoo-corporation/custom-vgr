@@ -29,11 +29,12 @@
                     <field name="worktop_template_ids" widget="one2many_list" mode="tree" editable="bottom">
                         <tree editable="bottom" create="1" delete="1">
                             <field name="name"/>
-                            <field name="is_special_measurement"/>
-                            <field name="ml_measurement"/>
-                            <field name="unit_price"/>
+                            <field name="is_special_measurement" width="40px"/>
+                            <field name="ml_measurement" string="M/L"/>
+                            <field name="precio_ml_individual"/>
+                            <field name="unit_price" string="Precio M/L Total"/>
                             <field name="margin"/>
-                            <field name="total_price"/>
+                            <field name="total_price" string="Precio + Margen"/>
                         </tree>
                     </field>
                 </sheet>
