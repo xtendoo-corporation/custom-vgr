@@ -8,5 +8,6 @@ class ProductCategory(models.Model):
         ('', 'Sin cálculo automático'),
         ('mobiliario', 'Calcular coste por fórmula (Mobiliario)'),
         ('encimera', 'Calcular coste por fórmula (Encimera)'),
+        ('montaje', 'Calcular coste por fórmula (Montaje)'),
     ], string='Tipo de Cálculo de Coste', default='',
        help='Seleccionar el tipo de cálculo automático de coste para esta categoría de producto')

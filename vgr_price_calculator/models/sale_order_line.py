@@ -17,13 +17,18 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.needs_price_calculator = bool(line.product_id and
                                                line.product_id.categ_id and
-                                               line.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera'))
+                                               line.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera', 'montaje'))
 
     @api.onchange('product_id')
     def product_id_change(self):
         if (self.product_id and
-            self.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera')):
-            calculator_type = 'Mobiliario' if self.product_id.categ_id.calculate_cost_by_formula_type == 'mobiliario' else 'Encimera'
+            self.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera', 'montaje')):
+            calculator_types = {
+                'mobiliario': 'Mobiliario',
+                'encimera': 'Encimera',
+                'montaje': 'Montaje'
+            }
+            calculator_type = calculator_types.get(self.product_id.categ_id.calculate_cost_by_formula_type, 'Mobiliario')
             return {
                 'warning': {
                     'title': f'Calculadora de Precios ({calculator_type})',
@@ -46,6 +51,19 @@ class SaleOrderLine(models.Model):
                 'type': 'ir.actions.act_window',
                 'name': 'Calculadora de Precios (Encimera)',
                 'res_model': 'vgr.price.calculator.encimera.wizard',
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_product_id': self.product_id.id,
+                    'default_order_line_id': self.id,
+                }
+            }
+        elif formula_type == 'montaje':
+            # Usar calculadora de montaje
+            return {
+                'type': 'ir.actions.act_window',
+                'name': 'Calculadora de Precios (Montaje)',
+                'res_model': 'vgr.price.calculator.montaje.wizard',
                 'view_mode': 'form',
                 'target': 'new',
                 'context': {

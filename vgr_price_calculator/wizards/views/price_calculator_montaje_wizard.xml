@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_price_calculator_montaje_wizard_form" model="ir.ui.view">
+        <field name="name">vgr.price.calculator.montaje.wizard.form</field>
+        <field name="model">vgr.price.calculator.montaje.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Calculadora de Precios (Montaje)">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="product_id" readonly="1"/>
+                            <field name="order_line_id" invisible="1"/>
+                        </group>
+                        <group>
+                            <field name="total_price_montaje" readonly="1"
+                                   style="font-size: 18px; font-weight: bold; color: #000000;"
+                                   options="{'label_style': 'font-size: 16px; font-weight: bold;'}"/>
+                        </group>
+                    </group>
+                    <field name="montaje_template_ids" widget="one2many_list" mode="tree" editable="bottom">
+                        <tree editable="bottom" create="1" delete="1">
+                            <field name="name"/>
+                            <field name="ml_measurement" string="M/L"/>
+                            <field name="precio_ml_individual"/>
+                            <field name="unit_price" string="Precio M/L Total"/>
+                            <field name="margin"/>
+                            <field name="total_price" string="Precio + Margen"/>
+                        </tree>
+                    </field>
+                </sheet>
+                <footer>
+                    <button name="apply_calculated_price" string="Aplicar Precio" type="object" class="btn-primary" data-hotkey="q"/>
+                    <button string="Cancelar" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+</odoo>
