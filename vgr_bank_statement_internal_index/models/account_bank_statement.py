@@ -21,6 +21,30 @@ class AccountBankStatement(models.Model):
             statement.line_ids._compute_simple_internal_index()
         return True
 
+    def action_recalculate_running_balance(self):
+        """Recalcula el running_balance de todas las líneas del extracto"""
+        for statement in self:
+            # Obtener líneas ordenadas por secuencia
+            lines = statement.line_ids.sorted(key=lambda r: (r.sequence, r.id))
+            balance = statement.balance_start
+
+            # Recalcular el running_balance para cada línea
+            for line in lines:
+                balance += line.amount
+                # Forzar el recálculo escribiendo en un campo
+                line.write({'sequence': line.sequence})
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Recálculo completado',
+                'message': 'El running balance ha sido recalculado para todas las líneas.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
+
     def action_delete_lines(self):
         """Elimina líneas que no tienen statement_id"""
         lines_to_delete = self.env['account.bank.statement.line'].search([

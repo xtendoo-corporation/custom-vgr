@@ -13,7 +13,7 @@
                 <field name="payment_ref" string="Label"/>
                 <field name="partner_id"/>
                 <field name="amount" sum="Total"/>
-                <field name="running_balance" string="Saldo" readonly="1"/>
+                <field name="running_balance" string="Saldo"/>
                 <button name="action_undo_reconciliation" type="object" icon="fa-undo" title="Deshacer Conciliación" string="Revertie la conciliación" invisible="not is_reconciled"/>
                 <button name="action_open_journal_entry" type="object" icon="fa-folder" title="Ver Entradas del Diario"/>
                 <field name="is_reconciled" invisible="1" column_invisible="1"/>
@@ -50,6 +50,12 @@
                         icon="fa-refresh"
                         string="Recalcular Índices"
                         help="Fuerza el recálculo del internal_index de todas las líneas"/>
+                <button name="action_recalculate_running_balance"
+                        type="object"
+                        class="oe_stat_button"
+                        icon="fa-calculator"
+                        string="Recalcular Running Balance"
+                        help="Recalcula el running_balance de todas las líneas del extracto"/>
                 <button name="action_delete_lines"
                         type="object"
                         class="oe_stat_button"
