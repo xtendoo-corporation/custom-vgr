@@ -1,6 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
 
+    <!-- Server actions para invocar los métodos del modelo desde la vista (evita validación directa de métodos) -->
+    <record id="action_server_recalculate_sequences" model="ir.actions.server">
+        <field name="name">Recalcular Secuencias</field>
+        <field name="model_id" ref="account.model_account_bank_statement"/>
+        <field name="state">code</field>
+        <field name="code">model.action_recalculate_sequences()</field>
+    </record>
+
+    <record id="action_server_recalculate_internal_index" model="ir.actions.server">
+        <field name="name">Recalcular Índices</field>
+        <field name="model_id" ref="account.model_account_bank_statement"/>
+        <field name="state">code</field>
+        <field name="code">model.action_recalculate_internal_index()</field>
+    </record>
+
+    <record id="action_server_recalculate_running_balance" model="ir.actions.server">
+        <field name="name">Recalcular Running Balance</field>
+        <field name="model_id" ref="account.model_account_bank_statement"/>
+        <field name="state">code</field>
+        <field name="code">model.action_recalculate_running_balance()</field>
+    </record>
+
+    <record id="action_server_delete_lines" model="ir.actions.server">
+        <field name="name">Borrar Líneas Vacías</field>
+        <field name="model_id" ref="account.model_account_bank_statement"/>
+        <field name="state">code</field>
+        <field name="code">model.action_delete_lines()</field>
+    </record>
+
     <!-- Vista tree personalizada para las líneas del bank statement -->
     <record id="view_bank_statement_line_tree_internal_index" model="ir.ui.view">
         <field name="name">account.bank.statement.line.tree.internal.index</field>
@@ -38,26 +67,26 @@
 
             <!-- Añadir botones en el header -->
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_recalculate_sequences"
-                        type="object"
+                <button name="vgr_bank_statement_internal_index.action_server_recalculate_sequences"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-sort-numeric-asc"
                         string="Recalcular Secuencias"
                         help="Recalcula las secuencias basándose en la fecha"/>
-                <button name="action_recalculate_internal_index"
-                        type="object"
+                <button name="vgr_bank_statement_internal_index.action_server_recalculate_internal_index"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-refresh"
                         string="Recalcular Índices"
                         help="Fuerza el recálculo del internal_index de todas las líneas"/>
-                <button name="action_recalculate_running_balance"
-                        type="object"
+                <button name="vgr_bank_statement_internal_index.action_server_recalculate_running_balance"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-calculator"
                         string="Recalcular Running Balance"
                         help="Recalcula el balance de todas las líneas del extracto"/>
-                <button name="action_delete_lines"
-                        type="object"
+                <button name="vgr_bank_statement_internal_index.action_server_delete_lines"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-trash"
                         string="Borrar Líneas Vacías"
