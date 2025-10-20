@@ -39,7 +39,12 @@ class PriceCalculatorEncimeraTemplate(models.Model):
         store=True,
         readonly=False
     )
-    margin = fields.Float('Margen', digits=(16, 2), default=0.0)
+    margin = fields.Float(
+        'Margen (%)',
+        digits=(16, 2),
+        default=0.0,
+        help='Porcentaje de margen a aplicar sobre el precio unitario. Ejemplo: 10 para 10%.'
+    )
     total_price = fields.Float(
         'Precio Total',
         compute='_compute_total_price',
@@ -74,5 +79,5 @@ class PriceCalculatorEncimeraTemplate(models.Model):
     @api.depends('unit_price', 'margin')
     def _compute_total_price(self):
         for record in self:
-            # Fórmula: margen + precio unitario
-            record.total_price = record.margin + record.unit_price
+            # Fórmula: total = unit_price + (unit_price * margin / 100)
+            record.total_price = record.unit_price + (record.unit_price * record.margin / 100)
