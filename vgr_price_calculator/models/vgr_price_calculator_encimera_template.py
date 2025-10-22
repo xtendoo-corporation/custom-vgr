@@ -17,7 +17,6 @@ class PriceCalculatorEncimeraTemplate(models.Model):
     name = fields.Char('Nombre', required=True)
     length = fields.Float('Largo', digits=(16, 2))
     width = fields.Float('Ancho', digits=(16, 2))
-    is_special_measurement = fields.Boolean('Requiere cálculo especial')
     ml_measurement = fields.Float(
         'M/L (Medición Encimera)',
         digits=(16, 2),
@@ -51,13 +50,19 @@ class PriceCalculatorEncimeraTemplate(models.Model):
         store=True,
         digits=(16, 2)
     )
+    n_aux = fields.Float(
+        string='N Auxiliar',
+        digits=(16, 2),
+        default=0.0,
+        help='Campo auxiliar para cálculos adicionales.'
+    )
 
-    @api.depends('length', 'width', 'is_special_measurement')
+    @api.depends('length', 'width', 'n_aux')
     def _compute_ml_measurement(self):
         """Calcular ml_measurement según las dimensiones"""
         for record in self:
-            if record.is_special_measurement:
-                record.ml_measurement = record.length * record.width * 0.60
+            if record.n_aux > 0:
+                record.ml_measurement = record.length * record.width * record.n_aux
             else:
                 record.ml_measurement = record.length
 

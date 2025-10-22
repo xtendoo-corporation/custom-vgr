@@ -12,8 +12,6 @@
                             <field name="order_line_id" invisible="1"/>
                             <field name="grosor" widget="float" options="{'type': 'number', 'step': 0.1}"
                                    placeholder="Valor entre 12 y 20 mm"/>
-                            <field name="length"/>
-                            <field name="width"/>
                             <field name="marca"/>
                             <field name="encimera_canto"/>
                         </group>
@@ -29,7 +27,9 @@
                     <field name="worktop_template_ids" widget="one2many_list" mode="tree" editable="bottom">
                         <tree editable="bottom" create="1" delete="1">
                             <field name="name"/>
-                            <field name="is_special_measurement" width="40px"/>
+                            <field name="length"/>
+                            <field name="width"/>
+                            <field name="n_aux"/>
                             <field name="ml_measurement" string="M/L"/>
                             <field name="precio_ml_individual"/>
                             <field name="unit_price" string="Precio M/L Total"/>

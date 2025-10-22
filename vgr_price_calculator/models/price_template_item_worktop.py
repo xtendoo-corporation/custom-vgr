@@ -6,6 +6,11 @@ class PriceTemplateItemWorktop(models.Model):
     _description = 'Plantilla de Elementos de Precio para Encimeras'
 
     name = fields.Char('Nombre', required=True)
-    auxiliary_number = fields.Float('Nº Auxiliar')
-    is_special_measurement = fields.Boolean('Requiere cálculo especial',
-                                            help="Marcar si requiere regla de tres para medidas especiales")
+    n_aux = fields.Float(
+        string='N Auxiliar',
+        digits=(16, 2),
+        default=0.0,
+        help='Campo auxiliar para cálculos adicionales.'
+    )
+    length = fields.Float('Largo', digits=(16, 2))
+    width = fields.Float('Ancho', digits=(16, 2))

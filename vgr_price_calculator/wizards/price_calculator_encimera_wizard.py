@@ -1,5 +1,6 @@
 import logging
 import json
+
 from odoo import api, fields, models
 from odoo.exceptions import ValidationError
 
@@ -33,10 +34,6 @@ class PriceCalculatorEncimeraWizard(models.Model):
         for record in self:
             if record.grosor < 12.0 or record.grosor > 20.0:
                 raise ValidationError("El grosor debe estar entre 12 y 20 mm (ambos incluidos).")
-
-    # Campos de cabecera trasladados desde el modelo de plantillas
-    length = fields.Float('Largo', digits=(16, 2), help="Largo de la encimera")
-    width = fields.Float('Ancho', digits=(16, 2), help="Ancho de la encimera")
 
     marca = fields.Char(string='Marca')
     encimera_canto = fields.Char(string='Encimera Canto')
@@ -113,17 +110,17 @@ class PriceCalculatorEncimeraWizard(models.Model):
                     template.unit_price = template.ml_measurement * self.precio_ml
 
     # Nuevo onchange para actualizar las plantillas cuando cambian length o width
-    @api.onchange('length', 'width')
+    @api.onchange('length', 'width', 'n_aux')
     def _onchange_dimensions(self):
         if self.worktop_template_ids:
             for template in self.worktop_template_ids:
                 # Solo actualizar dimensiones para plantillas que requieren cálculo especial
-                if template.is_special_measurement:
+                if template.n_aux:
                     # Actualizar las dimensiones de las plantillas con los valores de cabecera
                     template.length = self.length
                     template.width = self.width
                     # Recalcular ml_measurement para cálculo especial
-                    template.ml_measurement = template.length * template.width * 0.60
+                    template.ml_measurement = template.length * template.width * template.n_aux
                 else:
                     # Para plantillas sin cálculo especial, no usar dimensiones de cabecera
                     # ml_measurement se mantendrá como está o se puede editar manualmente
@@ -149,7 +146,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                 _logger.info(f"Encontrado wizard existente ID: {existing_wizard.id}")
 
                 # Copiamos los valores básicos incluyendo los nuevos campos de cabecera
-                for field in ['grosor', 'marca', 'encimera_canto', 'metros_lineales', 'precio_ml', 'length', 'width']:
+                for field in ['grosor', 'marca', 'encimera_canto', 'metros_lineales', 'precio_ml']:
                     if field in fields_list:
                         res[field] = existing_wizard[field]
 
@@ -165,7 +162,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'name': template.name,
                         'length': template.length,
                         'width': template.width,
-                        'is_special_measurement': template.is_special_measurement,
+                        'n_aux': template.n_aux,
                         'ml_measurement': template.ml_measurement,
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
@@ -188,20 +185,17 @@ class PriceCalculatorEncimeraWizard(models.Model):
 
         if template_bases:
             # Creamos plantillas in-memory usando comandos Odoo (0, 0, {...})
-            # Solo usar dimensiones de cabecera para plantillas que requieren cálculo especial
-            default_length = res.get('length', 0.0)
-            default_width = res.get('width', 0.0)
 
             template_data = []
             for template in template_bases:
-                if template.is_special_measurement:
+                if template.n_aux:
                     # Para plantillas con cálculo especial, usar dimensiones de cabecera
                     template_data.append({
                         'name': template.name,
-                        'length': default_length,
-                        'width': default_width,
-                        'is_special_measurement': template.is_special_measurement,
-                        'ml_measurement': default_length * default_width * 0.60,
+                        'length': template.length,
+                        'width': template.width,
+                        'n_aux': template.n_aux,
+                        'ml_measurement': template.length * template.width * template.n_aux,
                         'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
                         'margin': 0.0,
@@ -213,7 +207,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'name': template.name,
                         'length': 0.0,  # No heredar de cabecera
                         'width': 0.0,   # No heredar de cabecera
-                        'is_special_measurement': template.is_special_measurement,
+                        'n_aux': 0.0,
                         'ml_measurement': 0.0,  # Se editará manualmente
                         'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
@@ -268,7 +262,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'name': template.name,
                         'length': template.length,
                         'width': template.width,
-                        'is_special_measurement': template.is_special_measurement,
+                        'n_aux': template.n_aux,
                         'ml_measurement': template.ml_measurement,
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
@@ -281,7 +275,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'name': template.name,
                         'length': template.length,
                         'width': template.width,
-                        'is_special_measurement': template.is_special_measurement,
+                        'n_aux': template.n_aux,
                         'ml_measurement': template.ml_measurement,
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
