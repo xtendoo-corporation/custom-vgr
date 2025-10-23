@@ -62,7 +62,7 @@ class PriceCalculatorEncimeraTemplate(models.Model):
         """Calcular ml_measurement según las dimensiones"""
         for record in self:
             if record.n_aux > 0:
-                record.ml_measurement = record.length * record.width * record.n_aux
+                record.ml_measurement = record.length * record.width / record.n_aux
             else:
                 record.ml_measurement = record.length
 

@@ -120,7 +120,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                     template.length = self.length
                     template.width = self.width
                     # Recalcular ml_measurement para cálculo especial
-                    template.ml_measurement = template.length * template.width * template.n_aux
+                    template.ml_measurement = template.length * template.width / template.n_aux
                 else:
                     # Para plantillas sin cálculo especial, no usar dimensiones de cabecera
                     # ml_measurement se mantendrá como está o se puede editar manualmente
@@ -195,7 +195,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'length': template.length,
                         'width': template.width,
                         'n_aux': template.n_aux,
-                        'ml_measurement': template.length * template.width * template.n_aux,
+                        'ml_measurement': template.length * template.width / template.n_aux,
                         'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
                         'margin': 0.0,
