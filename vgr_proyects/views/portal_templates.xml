@@ -69,16 +69,16 @@
                     .project-tracking-container {
                         background: #ffffff;
                         border-radius: 12px;
-                        padding: 25px;
+                        padding: 40px;
                         margin: 20px auto;
-                        max-width: 600px;
+                        max-width: 1400px;
                         box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
                         border: 2px solid #e0e0e0;
                     }
 
                     .tracking-header {
                         text-align: center;
-                        margin-bottom: 25px;
+                        margin-bottom: 40px;
                     }
 
                     .tracking-icon {
@@ -89,81 +89,139 @@
 
                     .tracking-title {
                         color: #3e5451;
-                        font-size: 24px;
+                        font-size: 28px;
                         font-weight: bold;
                         margin: 0;
                     }
 
                     .project-stage-tracker-vertical {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        padding: 20px 0;
+                        position: relative;
+                        padding: 30px 0 30px 100px;
+                        margin: 0 auto;
+                        max-width: 1100px;
+                    }
+
+                    /* Línea vertical gruesa */
+                    .project-stage-tracker-vertical::before {
+                        content: '';
+                        position: absolute;
+                        left: 50px;
+                        top: 30px;
+                        bottom: 30px;
+                        width: 8px;
+                        background: linear-gradient(to bottom, #a8d5ba 0%, #6b9080 100%);
+                        border-radius: 4px;
                     }
 
                     .stage-vertical-item {
+                        position: relative;
                         display: flex;
-                        justify-content: center;
                         align-items: center;
-                        width: 100%;
-                        max-width: 380px;
-                        margin: 8px 0;
-                        z-index: 2;
+                        margin-bottom: 60px;
+                        min-height: 60px;
                     }
 
+                    .stage-vertical-item:last-child {
+                        margin-bottom: 0;
+                    }
+
+                    /* Punto/círculo de la etapa */
+                    .stage-point {
+                        position: absolute;
+                        left: -58px;
+                        width: 28px;
+                        height: 28px;
+                        border-radius: 50%;
+                        background: #fff;
+                        border: 5px solid #d0d0d0;
+                        z-index: 2;
+                        transition: all 0.3s ease;
+                    }
+
+                    /* Contenido de la etapa (nombre a la derecha) - SIN FONDO */
                     .stage-content-box {
-                        background: white;
-                        border-radius: 10px;
-                        padding: 18px 25px;
-                        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
+                        background: transparent;
+                        padding: 10px 20px;
                         transition: all 0.3s ease;
                         width: 100%;
-                        border: 3px solid #d0d0d0;
+                        margin-left: 30px;
+                        border: none;
+                        box-shadow: none;
+                    }
+
+                    .stage-name {
+                        font-size: 24px;
+                        font-weight: 600;
+                        line-height: 1.4;
+                        color: #2c3e50;
+                    }
+
+                    /* Etapa actual */
+                    .stage-vertical-item.current .stage-point {
+                        width: 40px;
+                        height: 40px;
+                        left: -64px;
+                        background: linear-gradient(135deg, #3e5451 0%, #567d6e 100%);
+                        border: 6px solid #a8d5ba;
+                        box-shadow: 0 0 0 10px rgba(168, 213, 186, 0.3),
+                                    0 5px 25px rgba(62, 84, 81, 0.6);
+                        animation: pulse-point 2s ease-in-out infinite;
+                    }
+
+                    @keyframes pulse-point {
+                        0%, 100% {
+                            box-shadow: 0 0 0 10px rgba(168, 213, 186, 0.3),
+                                        0 5px 25px rgba(62, 84, 81, 0.6);
+                        }
+                        50% {
+                            box-shadow: 0 0 0 15px rgba(168, 213, 186, 0.2),
+                                        0 5px 30px rgba(62, 84, 81, 0.8);
+                        }
                     }
 
                     .stage-vertical-item.current .stage-content-box {
-                        background: linear-gradient(135deg, #3e5451 0%, #567d6e 100%);
-                        border-color: #a8d5ba;
-                        border-width: 5px;
-                        transform: scale(1.15);
-                        box-shadow: 0 15px 40px rgba(62, 84, 81, 0.7), 0 0 30px rgba(168, 213, 186, 0.5);
-                        animation: pulse-current 2s ease-in-out infinite;
-                    }
-
-                    @keyframes pulse-current {
-                        0%, 100% {
-                            box-shadow: 0 15px 40px rgba(62, 84, 81, 0.7), 0 0 30px rgba(168, 213, 186, 0.5);
-                        }
-                        50% {
-                            box-shadow: 0 15px 40px rgba(62, 84, 81, 0.7), 0 0 40px rgba(168, 213, 186, 0.8);
-                        }
+                        background: transparent;
+                        border: none;
+                        transform: scale(1.1);
                     }
 
                     .stage-vertical-item.current .stage-name {
-                        color: white;
+                        color: #3e5451;
                         font-weight: bold;
-                        font-size: 20px;
-                        text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.5);
+                        font-size: 28px;
+                        text-shadow: 2px 2px 4px rgba(62, 84, 81, 0.2);
+                    }
+
+                    /* Etapa completada */
+                    .stage-vertical-item.completed .stage-point {
+                        background: linear-gradient(135deg, #6b9080 0%, #a4c3b2 100%);
+                        border-color: #6b9080;
                     }
 
                     .stage-vertical-item.completed .stage-content-box {
-                        background: linear-gradient(135deg, #6b9080 0%, #a4c3b2 100%);
-                        border-color: #6b9080;
+                        background: transparent;
+                        border: none;
                         opacity: 0.6;
                     }
 
                     .stage-vertical-item.completed .stage-name {
-                        color: white;
+                        color: #6b9080;
                     }
 
                     .stage-vertical-item.completed:hover .stage-content-box {
-                        opacity: 0.75;
+                        opacity: 0.8;
+                    }
+
+                    /* Etapa pendiente */
+                    .stage-vertical-item.pending .stage-point {
+                        background: #f5f5f5;
+                        border-color: #d0d0d0;
                     }
 
                     .stage-vertical-item.pending .stage-content-box {
-                        background: #f5f5f5;
-                        border-color: #d0d0d0;
-                        opacity: 0.7;
+                        background: transparent;
+                        border: none;
+                        opacity: 0.5;
                     }
 
                     .stage-vertical-item.pending .stage-name {
@@ -171,60 +229,22 @@
                     }
 
                     .stage-vertical-item:hover .stage-content-box {
-                        transform: translateY(-4px) scale(1.03);
-                        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+                        transform: translateX(10px);
                     }
 
-                    .stage-name {
-                        font-size: 18px;
-                        font-weight: 600;
-                        text-align: center;
-                        line-height: 1.3;
-                    }
-
-                    .stage-connector-vertical {
-                        display: flex;
-                        flex-direction: column;
-                        align-items: center;
-                        justify-content: center;
-                        margin: 3px 0;
-                        z-index: 1;
-                    }
-
-                    .connector-line {
-                        font-size: 28px;
-                        line-height: 0.8;
-                        font-weight: bold;
-                        color: #a8d5ba;
-                        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-                    }
-
-                    .stage-connector-vertical.completed .connector-line {
-                        color: #a4c3b2;
-                        opacity: 0.6;
-                    }
-
-                    .stage-connector-vertical.current .connector-line {
-                        color: #d4f1e6;
-                        font-size: 32px;
-                        font-weight: 900;
-                        text-shadow: 2px 2px 8px rgba(168, 213, 186, 0.8);
-                    }
-
-                    .stage-connector-vertical.pending .connector-line {
-                        color: #8a9a96;
-                        opacity: 0.5;
+                    .stage-vertical-item.current:hover .stage-content-box {
+                        transform: translateX(10px) scale(1.1);
                     }
 
                     .tracking-footer {
-                        margin-top: 30px;
+                        margin-top: 40px;
                         text-align: center;
                     }
 
                     .current-stage-highlight {
                         background: white;
-                        border-radius: 10px;
-                        padding: 20px;
+                        border-radius: 12px;
+                        padding: 25px;
                         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
                         border: 3px solid #a8d5ba;
                     }
@@ -237,23 +257,24 @@
                     }
 
                     .highlight-stage {
-                        font-size: 28px;
+                        font-size: 30px;
                         font-weight: bold;
                         color: #3e5451;
                         text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+                        margin-top: 10px;
                     }
 
                     .project-info-card {
                         background: white;
                         border-radius: 12px;
-                        padding: 25px;
-                        margin-bottom: 25px;
+                        padding: 30px;
+                        margin-bottom: 30px;
                         box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
                         border-left: 5px solid #3e5451;
                     }
 
                     .project-info-card h2 {
-                        font-size: 26px;
+                        font-size: 28px;
                         font-weight: bold;
                         color: #2c3e50;
                     }
@@ -264,12 +285,26 @@
                     }
 
                     @media (max-width: 768px) {
-                        .project-tracking-container { max-width: 100%; padding: 20px; }
-                        .tracking-title { font-size: 20px; }
-                        .stage-name { font-size: 16px; }
-                        .connector-line { font-size: 24px; }
-                        .highlight-stage { font-size: 24px; }
-                        .stage-vertical-item { max-width: 100%; }
+                        .project-tracking-container {
+                            max-width: 100%;
+                            padding: 25px 15px;
+                        }
+                        .tracking-title { font-size: 24px; }
+                        .stage-name { font-size: 20px; }
+                        .stage-vertical-item.current .stage-name { font-size: 24px; }
+                        .highlight-stage { font-size: 26px; }
+                        .project-stage-tracker-vertical {
+                            padding-left: 80px;
+                        }
+                        .project-stage-tracker-vertical::before {
+                            left: 35px;
+                        }
+                        .stage-point {
+                            left: -48px;
+                        }
+                        .stage-vertical-item.current .stage-point {
+                            left: -54px;
+                        }
                     }
                 </style>
 
@@ -313,25 +348,18 @@
                         <t t-set="visible_stages" t-value="[s for s in stage_info.get('stages', []) if not s.get('hide_in_portal')]"/>
                         <div class="project-stage-tracker-vertical">
                             <t t-foreach="visible_stages" t-as="stage">
-                                <!-- Etapa -->
+                                <!-- Etapa con punto y nombre a la derecha -->
                                 <div t-attf-class="stage-vertical-item #{stage.get('status', '')}">
+                                    <!-- Punto/círculo de la etapa -->
+                                    <div class="stage-point"></div>
+
+                                    <!-- Contenido de la etapa (nombre a la derecha) -->
                                     <div class="stage-content-box">
                                         <div class="stage-name">
                                             <t t-esc="stage.get('name', '')"/>
                                         </div>
                                     </div>
                                 </div>
-
-                                <!-- Línea conectora vertical "|" -->
-                                <t t-if="not stage_last">
-                                    <div t-attf-class="stage-connector-vertical #{stage.get('status', '')}">
-                                        <div class="connector-line">    ↓</div>
-                                        <div class="connector-line">    |</div>
-                                        <div class="connector-line">    |</div>
-                                        <div class="connector-line">    |</div>
-                                        <div class="connector-line">    ↓</div>
-                                    </div>
-                                </t>
                             </t>
                         </div>
 

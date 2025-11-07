@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Sobrescribir el layout de notificación por email para eliminar la cabecera "Su Proyecto #..." -->
+        <template id="mail_notification_layout_project" inherit_id="mail.mail_notification_layout">
+            <!-- Ocultar el record_name solo para project.project -->
+            <xpath expr="//td[@t-else='']/span[@t-out='record_name']" position="replace">
+                <t t-if="record and record._name != 'project.project'">
+                    <span style="font-weight:bold;" t-out="record_name"/>
+                </t>
+                <!-- Para project.project, no mostrar nada -->
+            </xpath>
+        </template>
+
+        <!-- Sobrescribir el layout LIGHT de notificación (el que realmente se usa) -->
+        <template id="mail_notification_light_project" inherit_id="mail.mail_notification_light">
+            <!-- Ocultar la primera fila (header) cuando es project.project usando condicional t-if -->
+            <xpath expr="//table[@role='presentation'][@width='100%'][@style='background-color: white; padding: 0; border-collapse:separate;']/tr[1]" position="attributes">
+                <attribute name="t-if">not (message and message.model == 'project.project')</attribute>
+            </xpath>
+
+            <!-- También ocultar el hr (línea horizontal) cuando es project.project -->
+            <xpath expr="//table[@role='presentation'][@width='100%'][@style='background-color: white; padding: 0; border-collapse:separate;']/tr[2]" position="attributes">
+                <attribute name="t-if">not (message and message.model == 'project.project')</attribute>
+            </xpath>
+        </template>
+    </data>
+</odoo>
+

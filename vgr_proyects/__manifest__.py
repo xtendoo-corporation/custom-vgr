@@ -23,6 +23,7 @@
         'views/project_task_views.xml',
         'views/project_project_views.xml',
         'views/portal_templates.xml',
+        'views/mail_notification_layout.xml',
     ],
     'installable': True,
     'auto_install': False,

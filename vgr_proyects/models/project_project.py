@@ -117,4 +117,74 @@ class ProjectProject(models.Model):
 
         return result
 
+    def name_get(self):
+        """Personalizar el nombre que se muestra en los emails para evitar 'Su Proyecto #...'"""
+        return super().name_get()
+
+    def _message_notification_recipients(self, message, recipients_data, **kwargs):
+        """Personalizar los destinatarios de notificación para evitar 'Su Proyecto #...'"""
+        # Ejecutar con contexto que oculte el nombre del documento
+        return super(ProjectProject, self.with_context(mail_post_autofollow=False))._message_notification_recipients(
+            message, recipients_data, **kwargs
+        )
+
+    def _notify_record_by_email(self, message, recipients_data, msg_vals=False,
+                                 model_description=False, mail_auto_delete=True, check_existing=False,
+                                 force_send=True, send_after_commit=True, **kwargs):
+        """Sobrescribir para eliminar el título 'Su Proyecto #...' de los emails"""
+        # Cambiar la descripción del modelo para evitar el prefijo
+        model_description = False
+        return super()._notify_record_by_email(
+            message, recipients_data, msg_vals=msg_vals,
+            model_description=model_description, mail_auto_delete=mail_auto_delete,
+            check_existing=check_existing, force_send=force_send,
+            send_after_commit=send_after_commit, **kwargs
+        )
+
+    def _notify_get_reply_to(self, default=None):
+        """Personalizar el reply-to del email"""
+        return super()._notify_get_reply_to(default=default)
+
+    def _notify_get_groups(self, msg_vals=None):
+        """Sobrescribir para evitar mostrar información del proyecto en la cabecera del email"""
+        groups = super()._notify_get_groups(msg_vals=msg_vals)
+        return groups
+
+    def _message_compute_subject(self):
+        """Sobrescribir para personalizar el subject del correo y evitar 'Su Proyecto #...'"""
+        # Si estamos enviando un email desde una plantilla, no modificar
+        if self._context.get('mail_notify_author'):
+            return super()._message_compute_subject()
+
+        # Personalizar el subject para que sea más limpio
+        for project in self:
+            if project.partner_id:
+                return f"Actualización de su Proyecto"
+        return "Actualización de Proyecto"
+
+    def _notify_get_action_link(self, link_type, **kwargs):
+        """Personalizar el enlace de acción para eliminar el prefijo 'Su Proyecto #...'"""
+        if link_type == 'view':
+            return self.get_portal_url()
+        return super()._notify_get_action_link(link_type, **kwargs)
+
+    def _message_get_default_recipients(self):
+        """Personalizar destinatarios para evitar 'Su Proyecto #...' en notificaciones"""
+        return {
+            record.id: {
+                'partner_ids': [record.partner_id.id] if record.partner_id else [],
+                'email_to': False,
+                'email_cc': False,
+            }
+            for record in self
+        }
+
+    def _notify_by_email_get_layout_render_values(self, message, recipients_group, msg_vals=None):
+        """Sobrescribir para eliminar el record_name de los emails"""
+        result = super()._notify_by_email_get_layout_render_values(message, recipients_group, msg_vals=msg_vals)
+        # Eliminar el record_name y subtitles para que no aparezca la cabecera
+        result['record_name'] = False
+        result['subtitles'] = []
+        return result
+
 

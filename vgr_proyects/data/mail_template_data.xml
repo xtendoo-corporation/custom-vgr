@@ -9,39 +9,30 @@
             <field name="partner_to">{{ object.partner_id.id }}</field>
             <field name="body_html" type="html">
 <div style="margin: 0px; padding: 0px; background-color: #F1F1F1; font-family: Arial, sans-serif;">
-    <div style="max-width: 590px; margin: 20px auto; background-color: white; padding: 20px; border-radius: 8px;">
-        <h2 style="color: #875A7B; margin-top: 0;">Actualización de Proyecto</h2>
+    <div style="max-width: 590px; margin: 0pxo; background-color: white; padding: 20px; border-radius: 8px;">
+        <h2 style="color: #3e5451; margin-top: 0;">Actualización de Proyecto</h2>
         <hr style="border: 1px solid #e5e5e5;"/>
         <p style="margin: 0px; padding: 0px; font-size: 13px;">
             Estimado/a <strong><t t-out="object.partner_id.name or 'Cliente'">Cliente</t></strong>,
             <br/><br/>
-            Le informamos que su proyecto <strong><t t-out="object.name or ''">Proyecto</t></strong> ha sido actualizado.
+            Le informamos que su proyecto ha sido actualizado.
         </p>
         <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p style="margin: 5px 0;"><strong>Proyecto:</strong> <t t-out="object.name or ''">Proyecto</t></p>
             <t t-if="object.stage_id and not object.stage_id.hide_in_portal">
                 <p style="margin: 5px 0;">
                     <strong>Estado Actual:</strong>
-                    <span style="background-color: #875A7B; color: white; padding: 3px 8px; border-radius: 3px;">
                         <t t-out="object.stage_id.name or ''">Etapa</t>
-                    </span>
                 </p>
-            </t>
-            <t t-if="object.user_id">
-                <p style="margin: 5px 0;"><strong>Responsable:</strong> <t t-out="object.user_id.name or ''">Responsable</t></p>
             </t>
             <t t-if="object.date">
                 <p style="margin: 5px 0;"><strong>Fecha de Inicio:</strong> <t t-out="format_date(object.date)">Fecha</t></p>
-            </t>
-            <t t-if="object.task_count">
-                <p style="margin: 5px 0;"><strong>Tareas:</strong> <t t-out="object.task_count">0</t> tarea(s)</p>
             </t>
         </div>
         <p style="margin: 0px; padding: 0px; font-size: 13px;">
             Puede acceder a los detalles completos de su proyecto haciendo clic en el siguiente botón:
         </p>
         <div style="text-align: center; margin: 20px 0;">
-            <a t-att-href="object.get_portal_url()" style="display: inline-block; padding: 10px 20px; background-color: #875A7B; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
+            <a t-att-href="object.get_portal_url()" style="display: inline-block; padding: 10px 20px; background-color: #3e5451; color: white; text-decoration: none; border-radius: 5px; font-weight: bold;">
                 Ver Proyecto
             </a>
         </div>
@@ -55,20 +46,9 @@
         <t t-else="">
             <p style="margin: 0px; padding: 0px; font-size: 13px;">
                 Saludos cordiales,<br/>
-                <strong><t t-out="object.user_id.name if object.user_id else user.name">Usuario</t></strong>
+                <strong>VGR</strong>
             </p>
         </t>
-        <hr style="border: 1px solid #e5e5e5; margin-top: 20px;"/>
-        <p style="text-align: center; color: #888; font-size: 11px; margin: 10px 0;">
-            <t t-out="object.company_id.name or ''">Empresa</t>
-            <br/>
-            <t t-if="object.company_id.email">
-                <t t-out="object.company_id.email">email</t>
-            </t>
-            <t t-if="object.company_id.phone">
-                | <t t-out="object.company_id.phone">teléfono</t>
-            </t>
-        </p>
     </div>
 </div>
             </field>
@@ -76,68 +56,6 @@
             <field name="auto_delete" eval="False"/>
         </record>
 
-        <record id="mail_template_project_welcome" model="mail.template">
-            <field name="name">Proyecto: Bienvenida al Cliente</field>
-            <field name="model_id" ref="project.model_project_project"/>
-            <field name="subject">{{ object.company_id.name }} - Bienvenido a su nuevo proyecto (Ref {{ object.name or 'n/a' }})</field>
-            <field name="email_from">{{ (object.user_id.email_formatted or user.email_formatted) }}</field>
-            <field name="partner_to">{{ object.partner_id.id }}</field>
-            <field name="body_html" type="html">
-<div style="margin: 0px; padding: 0px; background-color: #F1F1F1; font-family: Arial, sans-serif;">
-    <div style="max-width: 590px; margin: 20px auto; background-color: white; padding: 20px; border-radius: 8px;">
-        <h2 style="color: #875A7B; margin-top: 0;">¡Bienvenido a su nuevo proyecto!</h2>
-        <hr style="border: 1px solid #e5e5e5;"/>
-        <p style="margin: 0px; padding: 0px; font-size: 13px;">
-            Estimado/a <strong><t t-out="object.partner_id.name or 'Cliente'">Cliente</t></strong>,
-            <br/><br/>
-            Nos complace informarle que hemos creado su proyecto <strong><t t-out="object.name or ''">Proyecto</t></strong>.
-            <br/><br/>
-            A través de nuestro portal de clientes, podrá seguir el progreso de su proyecto en tiempo real, ver las tareas en curso y comunicarse directamente con nuestro equipo.
-        </p>
-        <div style="text-align: center; margin: 30px 0;">
-            <a t-att-href="object.get_portal_url()" style="display: inline-block; padding: 15px 30px; background-color: #875A7B; color: white; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">
-                Acceder a Mi Proyecto
-            </a>
-        </div>
-        <div style="background-color: #f5f5f5; padding: 15px; border-radius: 5px; margin: 20px 0;">
-            <p style="margin: 5px 0;"><strong>Nombre:</strong> <t t-out="object.name or ''">Proyecto</t></p>
-            <t t-if="object.user_id">
-                <p style="margin: 5px 0;"><strong>Responsable:</strong> <t t-out="object.user_id.name or ''">Responsable</t></p>
-            </t>
-            <t t-if="object.date">
-                <p style="margin: 5px 0;"><strong>Fecha de Inicio:</strong> <t t-out="format_date(object.date)">Fecha</t></p>
-            </t>
-        </div>
-        <p style="color: #888; margin: 0px; padding: 0px; font-size: 13px;">
-            Si tiene alguna pregunta o necesita asistencia, no dude en contactarnos.
-        </p>
-        <t t-if="not is_html_empty(object.user_id.signature)">
-            <br/>
-            <t t-out="object.user_id.signature or ''">Firma</t>
-        </t>
-        <t t-else="">
-            <p style="margin: 0px; padding: 0px; font-size: 13px;">
-                Gracias por confiar en nosotros.<br/>
-                <strong><t t-out="object.user_id.name if object.user_id else user.name">Usuario</t></strong>
-            </p>
-        </t>
-        <hr style="border: 1px solid #e5e5e5; margin-top: 20px;"/>
-        <p style="text-align: center; color: #888; font-size: 11px; margin: 10px 0;">
-            <t t-out="object.company_id.name or ''">Empresa</t>
-            <br/>
-            <t t-if="object.company_id.email">
-                <t t-out="object.company_id.email">email</t>
-            </t>
-            <t t-if="object.company_id.phone">
-                | <t t-out="object.company_id.phone">teléfono</t>
-            </t>
-        </p>
-    </div>
-</div>
-            </field>
-            <field name="lang">{{ object.partner_id.lang }}</field>
-            <field name="auto_delete" eval="False"/>
-        </record>
     </data>
 </odoo>
 
