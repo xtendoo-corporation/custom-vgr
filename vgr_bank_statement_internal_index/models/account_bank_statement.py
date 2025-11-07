@@ -4,7 +4,7 @@ from odoo import models, fields, api
 class AccountBankStatement(models.Model):
     _inherit = 'account.bank.statement'
 
-    def action_recalculate_sequences(self):
+    def action_vgr_recalculate_sequences(self):
         """Recalcula las secuencias de las líneas basándose en la fecha"""
         for statement in self:
             lines = statement.line_ids.sorted('date')
@@ -14,14 +14,14 @@ class AccountBankStatement(models.Model):
                 sequence += 1
         return True
 
-    def action_recalculate_internal_index(self):
+    def action_vgr_recalculate_internal_index(self):
         """Fuerza el recálculo del internal_index de todas las líneas"""
         for statement in self:
             # Forzamos el recálculo del campo computado internal_index
             statement.line_ids._compute_simple_internal_index()
         return True
 
-    def action_recalculate_running_balance(self):
+    def action_vgr_recalculate_running_balance(self):
         """Recalcula el running_balance de todas las líneas del extracto de forma determinista.
 
         En lugar de usar un "hack" que escribe en `sequence` para forzar recomputos, aquí forzamos
@@ -105,7 +105,7 @@ class AccountBankStatement(models.Model):
 
         return True
 
-    def action_delete_lines(self):
+    def action_vgr_delete_lines(self):
         """Elimina líneas que no tienen statement_id"""
         lines_to_delete = self.env['account.bank.statement.line'].search([
             ('statement_id', '=', False)
