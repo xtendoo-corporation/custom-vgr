@@ -14,6 +14,11 @@ class ProjectProject(models.Model):
         help='Selecciona un proyecto plantilla para copiar sus tareas y configuración al crear este proyecto.'
     )
 
+    def get_portal_url(self):
+        """Retorna la URL del portal para este proyecto"""
+        self.ensure_one()
+        return f'/my/project/tracking/{self.id}'
+
     @api.onchange('partner_id')
     def _onchange_partner_id_fill_customer_fields(self):
         if self.partner_id:
@@ -89,6 +94,7 @@ class ProjectProject(models.Model):
         # Guardar resultado de la operación write original
         result = super().write(vals)
 
+
         # Verificar si se modificó el nombre del proyecto
         if 'name' in vals:
             project_name = vals['name']
@@ -110,3 +116,5 @@ class ProjectProject(models.Model):
 
 
         return result
+
+

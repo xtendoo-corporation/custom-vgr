@@ -13,5 +13,16 @@
                 </xpath>
             </field>
         </record>
+
+        <record id="project_project_stage_view_form_inherit_vgr" model="ir.ui.view">
+            <field name="name">project.project.stage.view.form.inherit.vgr</field>
+            <field name="model">project.project.stage</field>
+            <field name="inherit_id" ref="project.project_project_stage_view_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='fold']" position="after">
+                    <field name="hide_in_portal" string="Oculto en portal (Vista cliente)"/>
+                </xpath>
+            </field>
+        </record>
     </data>
 </odoo>
