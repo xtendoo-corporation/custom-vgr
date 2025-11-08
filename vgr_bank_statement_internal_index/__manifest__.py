@@ -4,8 +4,14 @@
     'category': 'Accounting',
     'summary': 'Show internal_index field in bank statement lines',
     'license': 'LGPL-3',
-    'depends': ['account', 'account_statement_base'],
+    'author': 'Xtendoo Software',
+    'website': 'https://xtendoo.es',
+    'depends': [
+        'account',
+        'account_statement_base',
+    ],
     'data': [
+        'data/server_actions.xml',
         'views/account_bank_statement_views.xml',
     ],
     'installable': True,

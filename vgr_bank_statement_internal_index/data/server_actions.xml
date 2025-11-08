@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Server Action: Recalcular Secuencias -->
+        <record id="action_server_vgr_recalculate_sequences" model="ir.actions.server">
+            <field name="name">Recalcular Secuencias</field>
+            <field name="model_id" ref="account.model_account_bank_statement"/>
+            <field name="binding_model_id" ref="account.model_account_bank_statement"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.action_vgr_recalculate_sequences()
+            </field>
+        </record>
+
+        <!-- Server Action: Recalcular Internal Index -->
+        <record id="action_server_vgr_recalculate_internal_index" model="ir.actions.server">
+            <field name="name">Recalcular Índices</field>
+            <field name="model_id" ref="account.model_account_bank_statement"/>
+            <field name="binding_model_id" ref="account.model_account_bank_statement"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.action_vgr_recalculate_internal_index()
+            </field>
+        </record>
+
+        <!-- Server Action: Recalcular Running Balance -->
+        <record id="action_server_vgr_recalculate_running_balance" model="ir.actions.server">
+            <field name="name">Recalcular Running Balance</field>
+            <field name="model_id" ref="account.model_account_bank_statement"/>
+            <field name="binding_model_id" ref="account.model_account_bank_statement"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.action_vgr_recalculate_running_balance()
+            </field>
+        </record>
+
+        <!-- Server Action: Borrar Líneas Vacías -->
+        <record id="action_server_vgr_delete_lines" model="ir.actions.server">
+            <field name="name">Borrar Líneas Vacías</field>
+            <field name="model_id" ref="account.model_account_bank_statement"/>
+            <field name="binding_model_id" ref="account.model_account_bank_statement"/>
+            <field name="state">code</field>
+            <field name="code">
+if records:
+    action = records.action_vgr_delete_lines()
+            </field>
+        </record>
+    </data>
+</odoo>
+

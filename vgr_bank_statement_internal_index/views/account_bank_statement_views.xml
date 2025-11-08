@@ -25,39 +25,36 @@
         </field>
     </record>
 
-    <!-- Heredar la vista de formulario del bank statement para usar nuestra vista y añadir botones -->
+    <!-- Heredar la vista de formulario del bank statement (retiramos temporalmente smart buttons custom) -->
     <record id="view_bank_statement_form_internal_index" model="ir.ui.view">
         <field name="name">account.bank.statement.form.internal.index</field>
         <field name="model">account.bank.statement</field>
         <field name="inherit_id" ref="account_statement_base.view_bank_statement_form"/>
         <field name="arch" type="xml">
-            <!-- Usar nuestra vista tree personalizada para las líneas -->
             <xpath expr="//field[@name='line_ids']" position="attributes">
                 <attribute name="context">{'default_journal_id': journal_id, 'tree_view_ref': 'vgr_bank_statement_internal_index.view_bank_statement_line_tree_internal_index'}</attribute>
             </xpath>
-
-            <!-- Añadir botones en el header -->
             <xpath expr="//div[@name='button_box']" position="inside">
-                <button name="action_vgr_recalculate_sequences"
-                        type="object"
+                <button name="%(vgr_bank_statement_internal_index.action_server_vgr_recalculate_sequences)d"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-sort-numeric-asc"
                         string="Recalcular Secuencias"
                         help="Recalcula las secuencias basándose en la fecha"/>
-                <button name="action_vgr_recalculate_internal_index"
-                        type="object"
+                <button name="%(vgr_bank_statement_internal_index.action_server_vgr_recalculate_internal_index)d"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-refresh"
                         string="Recalcular Índices"
                         help="Fuerza el recálculo del internal_index de todas las líneas"/>
-                <button name="action_vgr_recalculate_running_balance"
-                        type="object"
+                <button name="%(vgr_bank_statement_internal_index.action_server_vgr_recalculate_running_balance)d"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-calculator"
                         string="Recalcular Running Balance"
-                        help="Recalcula el balance de todas las líneas"/>
-                <button name="action_vgr_delete_lines"
-                        type="object"
+                        help="Recalcula el balance de todas las líneas del extracto"/>
+                <button name="%(vgr_bank_statement_internal_index.action_server_vgr_delete_lines)d"
+                        type="action"
                         class="oe_stat_button"
                         icon="fa-trash"
                         string="Borrar Líneas Vacías"
@@ -67,4 +64,3 @@
     </record>
 
 </odoo>
-
