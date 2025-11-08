@@ -12,14 +12,34 @@ class AccountBankStatement(models.Model):
             for line in lines:
                 line.sequence = sequence
                 sequence += 1
-        return True
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Secuencias recalculadas',
+                'message': 'Las secuencias han sido recalculadas basándose en la fecha.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
 
     def action_vgr_recalculate_internal_index(self):
         """Fuerza el recálculo del internal_index de todas las líneas"""
         for statement in self:
             # Forzamos el recálculo del campo computado internal_index
             statement.line_ids._compute_simple_internal_index()
-        return True
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Índices recalculados',
+                'message': 'El internal_index ha sido recalculado para todas las líneas.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
 
     def action_vgr_recalculate_running_balance(self):
         """Recalcula el running_balance de todas las líneas del extracto de forma determinista.
@@ -110,8 +130,19 @@ class AccountBankStatement(models.Model):
         lines_to_delete = self.env['account.bank.statement.line'].search([
             ('statement_id', '=', False)
         ])
+        count = len(lines_to_delete)
         lines_to_delete.unlink()
-        return True
+
+        return {
+            'type': 'ir.actions.client',
+            'tag': 'display_notification',
+            'params': {
+                'title': 'Líneas eliminadas',
+                'message': f'{count} líneas sin extracto han sido eliminadas.',
+                'type': 'success',
+                'sticky': False,
+            }
+        }
 
 
 class AccountBankStatementLine(models.Model):
