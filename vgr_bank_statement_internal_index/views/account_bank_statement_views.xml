@@ -55,7 +55,7 @@
                         class="oe_stat_button"
                         icon="fa-calculator"
                         string="Recalcular Running Balance"
-                        help="Recalcula el balance de todas las líneas del extracto"/>
+                        help="Recalcula el balance de todas las líneas"/>
                 <button name="action_vgr_delete_lines"
                         type="object"
                         class="oe_stat_button"
