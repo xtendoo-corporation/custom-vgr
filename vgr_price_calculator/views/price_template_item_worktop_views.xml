@@ -19,6 +19,7 @@
                 <sheet>
                     <group>
                         <field name="name"/>
+                        <field name="skip_price_calculation"/>
                     </group>
                 </sheet>
             </form>

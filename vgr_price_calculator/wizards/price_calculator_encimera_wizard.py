@@ -106,7 +106,8 @@ class PriceCalculatorEncimeraWizard(models.Model):
         if self.precio_ml and self.worktop_template_ids:
             for template in self.worktop_template_ids:
                 # Solo actualizar si la plantilla NO tiene un precio individual definido
-                if not template.precio_ml_individual:
+                # Y NO tiene marcado saltar cálculo
+                if not template.precio_ml_individual and not template.skip_price_calculation:
                     template.unit_price = template.ml_measurement * self.precio_ml
 
     # Nuevo onchange para actualizar las plantillas cuando cambian length o width
@@ -126,8 +127,8 @@ class PriceCalculatorEncimeraWizard(models.Model):
                     # ml_measurement se mantendrá como está o se puede editar manualmente
                     pass
 
-                # Recalcular unit_price solo si NO tiene precio individual
-                if not template.precio_ml_individual and self.precio_ml:
+                # Recalcular unit_price solo si NO tiene precio individual y NO se salta el cálculo
+                if not template.precio_ml_individual and self.precio_ml and not template.skip_price_calculation:
                     template.unit_price = template.ml_measurement * self.precio_ml
 
     @api.model
@@ -167,6 +168,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
+                        'skip_price_calculation': template.skip_price_calculation,
                         'template_id': template.template_id.id if template.template_id else False,
                     }) for template in templates]
                 else:
@@ -199,6 +201,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
                         'margin': 0.0,
+                        'skip_price_calculation': template.skip_price_calculation,
                         'template_id': template.id,
                     })
                 else:
@@ -212,6 +215,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'precio_ml_individual': 0.0,
                         'unit_price': 0.0,
                         'margin': 0.0,
+                        'skip_price_calculation': template.skip_price_calculation,
                         'template_id': template.id,
                     })
 
@@ -267,6 +271,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
+                        'skip_price_calculation': template.skip_price_calculation,
                     })
                 else:
                     # Crear nueva plantilla si no está asociada al wizard actual
@@ -280,6 +285,7 @@ class PriceCalculatorEncimeraWizard(models.Model):
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
+                        'skip_price_calculation': template.skip_price_calculation,
                         'template_id': template.template_id.id if template.template_id else False,
                     })
 

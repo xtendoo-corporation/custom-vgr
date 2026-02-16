@@ -56,6 +56,11 @@ class PriceCalculatorEncimeraTemplate(models.Model):
         default=0.0,
         help='Campo auxiliar para cálculos adicionales.'
     )
+    skip_price_calculation = fields.Boolean(
+        string='No calcular precio',
+        default=False,
+        help='Si está marcado, el precio unitario no se calculará automáticamente en el wizard.'
+    )
 
     @api.depends('length', 'width', 'n_aux')
     def _compute_ml_measurement(self):
@@ -66,10 +71,26 @@ class PriceCalculatorEncimeraTemplate(models.Model):
             else:
                 record.ml_measurement = record.length
 
-    @api.depends('ml_measurement', 'precio_ml_individual', 'calculator_id.precio_ml')
+    @api.depends('ml_measurement', 'precio_ml_individual', 'calculator_id.precio_ml', 'skip_price_calculation')
     def _compute_unit_price(self):
         """Calcular unit_price según ml_measurement y el precio a usar"""
         for record in self:
+            if record.skip_price_calculation:
+                # Si se debe saltar el cálculo, mantenemos el valor actual (o 0.0 si es NULL)
+                # No hacemos nada, el campo es store=True y readonly=False, así que el usuario puede editarlo
+                # y el compute no lo sobrescribirá si no cambiamos nada aquí.
+                # Sin embargo, para un compute, generalmente se espera que asigne un valor.
+                # Si queremos permitir edición manual, el compute debe ser inteligente.
+                # En Odoo, si un campo computado con store=True es modificado manualmente,
+                # el compute no se vuelve a disparar a menos que cambien las dependencias.
+                # Aquí añadimos 'skip_price_calculation' como dependencia.
+                # Si cambia a True, no deberíamos forzar un valor, pero el ORM requiere que se asigne algo
+                # si el registro se está creando o si se recalcula.
+                # ESTRATEGIA: Si skip es True, no calculamos. Pero el ORM podría poner 0.0 si no asignamos.
+                # Vamos a asignar su propio valor actual para "no cambiarlo".
+                record.unit_price = record.unit_price
+                continue
+
             # Determinar qué precio usar
             if record.precio_ml_individual:
                 precio_a_usar = record.precio_ml_individual

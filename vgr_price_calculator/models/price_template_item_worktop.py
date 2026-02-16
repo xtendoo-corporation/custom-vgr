@@ -14,3 +14,8 @@ class PriceTemplateItemWorktop(models.Model):
     )
     length = fields.Float('Largo', digits=(16, 2))
     width = fields.Float('Ancho', digits=(16, 2))
+    skip_price_calculation = fields.Boolean(
+        string='No calcular precio',
+        default=False,
+        help='Si está marcado, el precio unitario no se calculará automáticamente en el wizard.'
+    )
