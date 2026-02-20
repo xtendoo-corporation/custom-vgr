@@ -22,6 +22,7 @@ This module provides portal customizations for VGR.
     ],
     'data': [
         'views/portal_templates.xml',
+        'views/res_partner_bank_views.xml',
     ],
     'installable': True,
     'auto_install': False,
