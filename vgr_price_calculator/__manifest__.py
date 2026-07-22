@@ -20,6 +20,7 @@
         'views/view_tree_quotation_sale_with_project.xml',
         'wizards/views/price_calculator_wizard_views.xml',
         'wizards/views/price_calculator_encimera_wizard.xml',
+        'wizards/views/price_calculator_aplacado_wizard.xml',
         'wizards/views/price_calculator_montaje_wizard.xml',
         "security/ir.model.access.csv",
     ],

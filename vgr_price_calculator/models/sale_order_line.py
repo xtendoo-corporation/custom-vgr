@@ -19,16 +19,17 @@ class SaleOrderLine(models.Model):
         for line in self:
             line.needs_price_calculator = bool(line.product_id and
                                                line.product_id.categ_id and
-                                               line.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera', 'montaje'))
+                                               line.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera', 'montaje', 'aplacado'))
 
     @api.onchange('product_id')
     def product_id_change(self):
         if (self.product_id and
-            self.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera', 'montaje')):
+            self.product_id.categ_id.calculate_cost_by_formula_type in ('mobiliario', 'encimera', 'montaje', 'aplacado')):
             calculator_types = {
                 'mobiliario': 'Mobiliario',
                 'encimera': 'Encimera',
-                'montaje': 'Montaje'
+                'montaje': 'Montaje',
+                'aplacado': 'Aplacado',
             }
             calculator_type = calculator_types.get(self.product_id.categ_id.calculate_cost_by_formula_type, 'Mobiliario')
             return {
@@ -58,6 +59,9 @@ class SaleOrderLine(models.Model):
         elif formula_type == 'mobiliario':
             res_model = 'vgr.price.calculator.wizard'
             name = 'Calculadora de Precios (Mobiliario)'
+        elif formula_type == 'aplacado':
+            res_model = 'vgr.price.calculator.aplacado.wizard'
+            name = 'Calculadora de Precios (Aplacado)'
 
         if not res_model:
             return
@@ -94,10 +98,10 @@ class SaleOrderLine(models.Model):
             # Copiar el wizard primero
             new_calc = calc.copy({'order_line_id': new_line.id})
             _logger.info(f"Nueva calculadora de encimera creada: {new_calc.id}")
-            
+
             # Eliminar plantillas automáticamente creadas (si las hay)
             new_calc.worktop_template_ids.unlink()
-            
+
             # Crear manualmente cada plantilla con todos sus datos
             for line in calc.worktop_template_ids:
                 line_data = line.copy_data()[0]
@@ -112,10 +116,10 @@ class SaleOrderLine(models.Model):
             # Copiar el wizard primero
             new_calc = calc.copy({'order_line_id': new_line.id})
             _logger.info(f"Nueva calculadora de montaje creada: {new_calc.id}")
-            
+
             # Eliminar plantillas automáticamente creadas (si las hay)
             new_calc.montaje_template_ids.unlink()
-            
+
             # Crear manualmente cada plantilla con todos sus datos
             for line in calc.montaje_template_ids:
                 line_data = line.copy_data()[0]
@@ -130,10 +134,10 @@ class SaleOrderLine(models.Model):
             # Copiar el wizard primero
             new_calc = calc.copy({'order_line_id': new_line.id})
             _logger.info(f"Nueva calculadora de mobiliario creada: {new_calc.id}")
-            
+
             # Eliminar líneas automáticamente creadas (si las hay)
             new_calc.price_item_ids.unlink()
-            
+
             # Crear manualmente cada línea con todos sus datos
             for line in calc.price_item_ids:
                 line_data = line.copy_data()[0]
@@ -141,5 +145,19 @@ class SaleOrderLine(models.Model):
                 line_data['sale_order_line_id'] = new_line.id
                 self.env['vgr.price.calculator.line'].create(line_data)
                 _logger.info(f"Línea de mobiliario copiada: {line.name}")
+
+        # Copiar calculadora de aplacado
+        aplacado_calculators = self.env['vgr.price.calculator.aplacado.wizard'].search([('order_line_id', '=', self.id)])
+        for calc in aplacado_calculators:
+            _logger.info(f"Copiando calculadora de aplacado {calc.id} a la nueva línea {new_line.id}")
+            new_calc = calc.copy({'order_line_id': new_line.id})
+            _logger.info(f"Nueva calculadora de aplacado creada: {new_calc.id}")
+            # eliminar plantillas automáticas si las hubiera
+            new_calc.aplacado_template_ids.unlink()
+            for line in calc.aplacado_template_ids:
+                line_data = line.copy_data()[0]
+                line_data['calculator_id'] = new_calc.id
+                self.env['vgr.price.calculator.aplacado.template'].create(line_data)
+                _logger.info(f"Plantilla de aplacado copiada: {line.name}")
 
         return new_line

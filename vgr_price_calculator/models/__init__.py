@@ -8,3 +8,4 @@ from . import price_template_item_worktop
 from . import price_template_item_montaje
 from . import vgr_price_calculator_encimera_template
 from . import vgr_price_calculator_montaje_template
+from . import vgr_price_calculator_aplacado_template
