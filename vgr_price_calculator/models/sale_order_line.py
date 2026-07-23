@@ -69,22 +69,26 @@ class SaleOrderLine(models.Model):
         # Buscar si ya existe un wizard para esta línea
         existing_wizard = self.env[res_model].search([('order_line_id', '=', self.id)], limit=1)
 
-        result = {
-            'type': 'ir.actions.act_window',
-            'name': name,
-            'res_model': res_model,
-            'view_mode': 'form',
-            'target': 'new',
-            'context': {
-                'default_product_id': self.product_id.id,
-                'default_order_line_id': self.id,
+        # Delegar la apertura/creación al método del propio wizard para que
+        # gestione la creación/normalización de las plantillas y evitar duplicados.
+        try:
+            return self.env[res_model].open_calculator_wizard(self.id)
+        except Exception:
+            # Fallback: devolver acción genérica si falla la delegación
+            result = {
+                'type': 'ir.actions.act_window',
+                'name': name,
+                'res_model': res_model,
+                'view_mode': 'form',
+                'target': 'new',
+                'context': {
+                    'default_product_id': self.product_id.id,
+                    'default_order_line_id': self.id,
+                }
             }
-        }
-
-        if existing_wizard:
-            result['res_id'] = existing_wizard.id
-
-        return result
+            if existing_wizard:
+                result['res_id'] = existing_wizard.id
+            return result
 
     def copy(self, default=None):
         _logger.info(f"Copiando línea de pedido {self.id} (Producto: {self.product_id.name})")

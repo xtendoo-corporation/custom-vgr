@@ -50,12 +50,24 @@ class PriceCalculatorAplacadoWizard(models.Model):
                 for field in ['precio_ml']:
                     if field in fields_list:
                         res[field] = existing_wizard[field]
+                # Asegurar que el product_id se propague al default_get para mostrarlo en la vista
+                if 'product_id' in fields_list:
+                    res['product_id'] = existing_wizard.product_id.id if existing_wizard.product_id else None
+            else:
+                # si no existe wizard persistente, permitir que el contexto provea product_id
+                if 'product_id' in fields_list:
+                    res['product_id'] = self.env.context.get('default_product_id')
 
+                # Filtrar plantillas existentes para que solo aparezcan las específicas de aplacado
+                default_names = ['M/L Aplacado', 'Encastre enchufe', 'Intermediario']
                 templates = self.env['vgr.price.calculator.aplacado.template'].search([
                     ('calculator_id', '=', existing_wizard.id)
                 ])
 
-                if templates:
+                # Mantener solo las plantillas que coincidan por nombre con default_names
+                filtered = templates.filtered(lambda t: (t.name in default_names) or (t.template_id and t.template_id.name in default_names))
+
+                if filtered:
                     res['aplacado_template_ids'] = [(0, 0, {
                         'name': t.name,
                         'length': t.length,
@@ -63,36 +75,54 @@ class PriceCalculatorAplacadoWizard(models.Model):
                         'precio_ml_individual': t.precio_ml_individual,
                         'unit_price': t.unit_price,
                         'margin': t.margin,
-                        'encastre_enchufe': t.encastre_enchufe,
-                        'intermediario': t.intermediario,
                         'skip_price_calculation': t.skip_price_calculation,
                         'template_id': t.template_id.id if t.template_id else False,
-                    }) for t in templates]
+                    }) for t in filtered]
                 else:
-                    # crear plantillas por defecto a partir de vgr.price.template.item
-                    base_items = self.env['vgr.price.template.item'].search([])
+                    # Si no hay plantillas filtradas, creamos las filas por defecto
+                    _logger.info("existing_wizard: no hay plantillas de aplacado filtradas, creando por defecto")
+                    base_items = self.env['vgr.price.template.item'].search([('name', 'in', default_names)])
                     template_data = []
-                    for item in base_items:
-                        template_data.append({
-                            'name': item.name,
-                            'length': 0.0,
-                            'ml_measurement': 0.0,
-                            'precio_ml_individual': 0.0,
-                            'unit_price': 0.0,
-                            'margin': 0.0,
-                            'encastre_enchufe': 0.0,
-                            'intermediario': 0.0,
-                            'skip_price_calculation': False,
-                            'template_id': item.id,
-                        })
+                    if base_items:
+                        for item in base_items:
+                            template_data.append({
+                                'name': item.name,
+                                'length': 0.0,
+                                'ml_measurement': 0.0,
+                                'precio_ml_individual': 0.0,
+                                'unit_price': 0.0,
+                                'margin': 0.0,
+                                'skip_price_calculation': False,
+                                'template_id': item.id,
+                            })
+                    else:
+                        for name in default_names:
+                            template_data.append({
+                                'name': name,
+                                'length': 0.0,
+                                'ml_measurement': 0.0,
+                                'precio_ml_individual': 0.0,
+                                'unit_price': 0.0,
+                                'margin': 0.0,
+                                'skip_price_calculation': False,
+                                'template_id': False,
+                            })
 
                     res['aplacado_template_ids'] = [(0, 0, d) for d in template_data]
+                    _logger.info(f"default_get: creadas {len(template_data)} plantillas in-memory para aplacado: {[d.get('name') for d in template_data]}")
 
         return res
 
     def apply_calculated_price(self):
         if self.order_line_id:
+            # guardar precio en la línea
             self.order_line_id.write({'price_unit': self.total_price_aplacado})
+            # asegurar que el wizard persistente tenga el product_id de la línea
+            try:
+                if self.order_line_id.product_id:
+                    self.product_id = self.order_line_id.product_id
+            except Exception:
+                _logger.exception('Error al asignar product_id al wizard durante apply_calculated_price')
 
             # limpiamos wizards antiguos
             old_wizards = self.search([('order_line_id', '=', self.order_line_id.id), ('id', '!=', self.id)])
@@ -114,8 +144,6 @@ class PriceCalculatorAplacadoWizard(models.Model):
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
-                        'encastre_enchufe': template.encastre_enchufe,
-                        'intermediario': template.intermediario,
                         'skip_price_calculation': template.skip_price_calculation,
                     })
                 else:
@@ -127,8 +155,6 @@ class PriceCalculatorAplacadoWizard(models.Model):
                         'precio_ml_individual': template.precio_ml_individual,
                         'unit_price': template.unit_price,
                         'margin': template.margin,
-                        'encastre_enchufe': template.encastre_enchufe,
-                        'intermediario': template.intermediario,
                         'skip_price_calculation': template.skip_price_calculation,
                         'template_id': template.template_id.id if template.template_id else False,
                     })
@@ -146,9 +172,109 @@ class PriceCalculatorAplacadoWizard(models.Model):
                 self.browse(duplicate_ids).unlink()
 
         calculator = self.search([('order_line_id', '=', order_line_id)], limit=1)
+        # obtener el producto de la línea para adjuntarlo al wizard persistente
+        order_line = self.env['sale.order.line'].browse(order_line_id)
+        product_id = order_line.product_id.id if order_line and order_line.product_id else False
         if not calculator:
-            calculator = self.create({'order_line_id': order_line_id})
+            calculator = self.create({'order_line_id': order_line_id, 'product_id': product_id})
+        else:
+            # Asegurar que el wizard persistente tenga product_id si falta
+            if not calculator.product_id and product_id:
+                try:
+                    calculator.product_id = product_id
+                except Exception:
+                    _logger.exception('No se pudo escribir product_id en wizard existente')
+            # Si ya existe calculadora pero sin plantillas, crear las plantillas por defecto
+            try:
+                if not calculator.aplacado_template_ids:
+                    _logger.info(f"open_calculator_wizard: wizard existente {calculator.id} sin plantillas, creando por defecto")
+                    base_items = self.env['vgr.price.template.item'].search([])
+                    if base_items:
+                        for item in base_items:
+                            self.env['vgr.price.calculator.aplacado.template'].create({
+                                'calculator_id': calculator.id,
+                                'name': item.name,
+                                'length': 0.0,
+                                'ml_measurement': 0.0,
+                                'precio_ml_individual': 0.0,
+                                'unit_price': 0.0,
+                                'margin': 0.0,
+                                'skip_price_calculation': False,
+                                'template_id': item.id,
+                            })
+                    else:
+                        for name in ['M/L Aplacado', 'Encastre enchufe', 'Intermediario']:
+                            self.env['vgr.price.calculator.aplacado.template'].create({
+                                'calculator_id': calculator.id,
+                                'name': name,
+                                'length': 0.0,
+                                'ml_measurement': 0.0,
+                                'precio_ml_individual': 0.0,
+                                'unit_price': 0.0,
+                                'margin': 0.0,
+                                'skip_price_calculation': False,
+                                'template_id': False,
+                            })
+                    # Forzar que los cambios estén disponibles inmediatamente
+                    self.env.cr.commit()
+            except Exception as e:
+                _logger.exception(f"Error creando plantillas por defecto para calculadora existente: {e}")
 
+        # Asegurar que existan las filas por defecto solo si no hay plantillas
+        try:
+            default_names = ['M/L Aplacado', 'Encastre enchufe', 'Intermediario']
+            existing_templates = self.env['vgr.price.calculator.aplacado.template'].search([('calculator_id', '=', calculator.id)])
+            if not existing_templates:
+                # crear solo las plantillas que necesitamos
+                base_items = self.env['vgr.price.template.item'].search([('name', 'in', default_names)])
+                if base_items:
+                    for item in base_items:
+                        self.env['vgr.price.calculator.aplacado.template'].create({
+                            'calculator_id': calculator.id,
+                            'name': item.name,
+                            'length': 0.0,
+                            'ml_measurement': 0.0,
+                            'precio_ml_individual': 0.0,
+                            'unit_price': 0.0,
+                            'margin': 0.0,
+                            'skip_price_calculation': False,
+                            'template_id': item.id,
+                        })
+                else:
+                    for name in default_names:
+                        self.env['vgr.price.calculator.aplacado.template'].create({
+                            'calculator_id': calculator.id,
+                            'name': name,
+                            'length': 0.0,
+                            'ml_measurement': 0.0,
+                            'precio_ml_individual': 0.0,
+                            'unit_price': 0.0,
+                            'margin': 0.0,
+                            'skip_price_calculation': False,
+                            'template_id': False,
+                        })
+                self.env.cr.commit()
+                _logger.info(f"open_calculator_wizard: creadas plantillas por defecto para wizard id={calculator.id}")
+            else:
+                # Si ya hay plantillas, asegurarse de que existan las tres entradas
+                for name in default_names:
+                    if not existing_templates.filtered(lambda t, n=name: t.name == n):
+                        self.env['vgr.price.calculator.aplacado.template'].create({
+                            'calculator_id': calculator.id,
+                            'name': name,
+                            'length': 0.0,
+                            'ml_measurement': 0.0,
+                            'precio_ml_individual': 0.0,
+                            'unit_price': 0.0,
+                            'margin': 0.0,
+                            'skip_price_calculation': False,
+                            'template_id': False,
+                        })
+                # No eliminar plantillas existentes para no perder datos del usuario
+        except Exception:
+            _logger.exception("Error al asegurar plantillas por defecto para wizard antes de abrir")
+
+        # Abrir la ventana sobre el wizard persistente para que las filas se muestren
         return {
             'type': 'ir.actions.act_window',
             'res_model': 'vgr.price.calculator.aplacado.wizard',
@@ -157,4 +283,18 @@ class PriceCalculatorAplacadoWizard(models.Model):
             'target': 'new',
             'context': {'default_order_line_id': order_line_id}
         }
+
+    @api.model_create_multi
+    def create(self, vals_list):
+        """Asegurarnos de que al crear un wizard programáticamente se generen
+        las plantillas por defecto (filas) si no vienen en vals.
+        Esto cubre la ruta en la que se crea el wizard antes de abrir la vista
+        (por ejemplo cuando otro helper llama a create y luego devuelve res_id),
+        evitando que la ventana se abra sin filas.
+        """
+        # No crear plantillas desde create() para evitar duplicados.
+        records = super(PriceCalculatorAplacadoWizard, self).create(vals_list)
+        for record in records:
+            _logger.info(f"create() wizard aplacado creado id={record.id}; no se crearán plantillas aquí para evitar duplicados")
+        return records
 

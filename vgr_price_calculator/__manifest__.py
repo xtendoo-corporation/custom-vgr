@@ -22,6 +22,7 @@
         'wizards/views/price_calculator_encimera_wizard.xml',
         'wizards/views/price_calculator_aplacado_wizard.xml',
         'wizards/views/price_calculator_montaje_wizard.xml',
+        'data/price_template_item_aplacado_data.xml',
         "security/ir.model.access.csv",
     ],
     'installable': True,

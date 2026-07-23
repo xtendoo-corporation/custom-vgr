@@ -43,16 +43,6 @@ class PriceCalculatorAplacadoTemplate(models.Model):
         default=0.0,
         help='Porcentaje de margen a aplicar sobre el precio unitario.'
     )
-    encastre_enchufe = fields.Float(
-        'Encastre enchufe (Coste)',
-        digits='Product Price',
-        default=0.0,
-    )
-    intermediario = fields.Float(
-        'Intermediario (Coste)',
-        digits='Product Price',
-        default=0.0,
-    )
     total_price = fields.Float(
         'Precio + Margen',
         compute='_compute_total_price',
@@ -88,9 +78,12 @@ class PriceCalculatorAplacadoTemplate(models.Model):
 
             record.unit_price = record.ml_measurement * precio_a_usar
 
-    @api.depends('unit_price', 'margin', 'encastre_enchufe', 'intermediario')
+    @api.depends('unit_price', 'margin')
     def _compute_total_price(self):
         for record in self:
-            subtotal = (record.unit_price or 0.0) + (record.encastre_enchufe or 0.0) + (record.intermediario or 0.0)
+            # Para Aplacado cada fila representa un concepto (p. ej. M/L Aplacado,
+            # Encastre enchufe, Intermediario). El total por fila se calcula a
+            # partir del unit_price y el margen aplicado a esa fila.
+            subtotal = (record.unit_price or 0.0)
             record.total_price = subtotal + (subtotal * (record.margin or 0.0) / 100.0)
 

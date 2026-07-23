@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Plantillas por defecto para la calculadora de Aplacado -->
+    <record id="vgr_price_template_item_aplacado_ml" model="vgr.price.template.item">
+        <field name="name">M/L Aplacado</field>
+        <field name="cost">0.0</field>
+        <field name="profit_percent">0.0</field>
+    </record>
+
+    <record id="vgr_price_template_item_aplacado_encastre" model="vgr.price.template.item">
+        <field name="name">Encastre enchufe</field>
+        <field name="cost">0.0</field>
+        <field name="profit_percent">0.0</field>
+    </record>
+
+    <record id="vgr_price_template_item_aplacado_intermediario" model="vgr.price.template.item">
+        <field name="name">Intermediario</field>
+        <field name="cost">0.0</field>
+        <field name="profit_percent">0.0</field>
+    </record>
+
+</odoo>
+
