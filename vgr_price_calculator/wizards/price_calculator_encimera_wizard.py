@@ -222,6 +222,44 @@ class PriceCalculatorEncimeraWizard(models.Model):
             res['worktop_template_ids'] = [(0, 0, data) for data in template_data]
             _logger.info(f"Creadas {len(template_bases)} plantillas in-memory")
 
+    def _create_default_templates_persisted(self, calculator):
+        """Crear las plantillas base persistidas asociadas a un wizard creado.
+
+        Esto evita el caso en el que se crea un wizard persistido (con
+        `create`) pero no se crean las plantillas asociadas en la base de
+        datos, lo que hace que al abrir la vista del wizard (res_id)
+        no se muestren filas en el one2many.
+        """
+        if not calculator or not calculator.id:
+            return
+
+        # Comprobar si ya existen plantillas asociadas
+        existing = self.env['vgr.price.calculator.encimera.template'].search([
+            ('calculator_id', '=', calculator.id)
+        ], limit=1)
+        if existing:
+            _logger.info(f"El wizard ID {calculator.id} ya tiene plantillas persistidas, no se crearán nuevas")
+            return
+
+        template_bases = self.env['vgr.price.template.item.worktop'].search([])
+        _logger.info(f"Creando {len(template_bases)} plantillas persistidas para wizard ID {calculator.id}")
+        for template in template_bases:
+            vals = {
+                'calculator_id': calculator.id,
+                'name': template.name,
+                'length': template.length if template.n_aux else 0.0,
+                'width': template.width if template.n_aux else 0.0,
+                'n_aux': template.n_aux,
+                'ml_measurement': (template.length * template.width / template.n_aux) if template.n_aux else 0.0,
+                'precio_ml_individual': 0.0,
+                'unit_price': 0.0,
+                'margin': 0.0,
+                'skip_price_calculation': template.skip_price_calculation,
+                'template_id': template.id,
+            }
+            self.env['vgr.price.calculator.encimera.template'].create(vals)
+        _logger.info(f"Plantillas persistidas creadas para wizard ID {calculator.id}")
+
     def apply_calculated_price(self):
         _logger.info(f"Aplicando calculadora ID: {self.id}, precio: {self.total_price_encimera}")
         if self.order_line_id:
@@ -310,8 +348,32 @@ class PriceCalculatorEncimeraWizard(models.Model):
 
         if not calculator:
             _logger.info(f"Creando nueva calculadora para order_line_id: {order_line_id}")
-            calculator = self.create({'order_line_id': order_line_id})
+            # Intentar asignar product_id desde la línea de pedido para que el
+            # wizard muestre el producto (antes no se asignaba y por eso aparecía vacío)
+            create_vals = {'order_line_id': order_line_id}
+            try:
+                order_line = self.env['sale.order.line'].browse(int(order_line_id))
+                if order_line and order_line.product_id:
+                    create_vals['product_id'] = order_line.product_id.id
+            except Exception:
+                # no hacemos nada, fallback: crear sin product_id
+                pass
+
+            calculator = self.create(create_vals)
             _logger.info(f"Nueva calculadora creada ID: {calculator.id}")
+            # Si existe calculadora pero no tiene product_id, intentar asegurarlo
+            if not calculator.product_id:
+                try:
+                    order_line = self.env['sale.order.line'].browse(int(order_line_id))
+                    if order_line and order_line.product_id:
+                        calculator.product_id = order_line.product_id.id
+                except Exception:
+                    pass
+            # Asegurar que existan plantillas persistidas para este wizard
+            try:
+                self._create_default_templates_persisted(calculator)
+            except Exception:
+                _logger.exception(f"Error creando plantillas persistidas para wizard ID {calculator.id}")
 
         # Retornar ventana con la calculadora
         # NOTA: Ya no creamos plantillas aquí, se crearán en default_get
